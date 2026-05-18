@@ -126,16 +126,50 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    new Chart(document.getElementById('clusterDoughnut').getContext('2d'), {
+    
+    function getThemeConfig() {
+        const isDark = document.documentElement.classList.contains('dark');
+        return {
+            textColor: isDark ? '#94a3b8' : '#64748b',
+            gridColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+            borderColor: isDark ? '#1e293b' : '#ffffff'
+        };
+    }
+
+    let theme = getThemeConfig();
+
+    const doughnutChart = new Chart(document.getElementById('clusterDoughnut').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: ['Ekonomi Rendah','Ekonomi Menengah','Ekonomi Mampu'], datasets: [{ data: [{{ $clusterDistribution['Rendah'] }}, {{ $clusterDistribution['Sedang'] }}, {{ $clusterDistribution['Tinggi'] }}], backgroundColor: ['rgba(244,63,94,0.85)','rgba(245,158,11,0.85)','rgba(20,184,166,0.85)'], borderWidth: 3, borderColor: '#fff', hoverOffset: 8 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 16, font: { size: 11, weight: '500' }, usePointStyle: true, pointStyle: 'circle', boxWidth: 8 } }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, titleFont: { size: 13, weight: 'bold' } } } }
+        data: { labels: ['Ekonomi Rendah','Ekonomi Menengah','Ekonomi Mampu'], datasets: [{ data: [{{ $clusterDistribution['Rendah'] }}, {{ $clusterDistribution['Sedang'] }}, {{ $clusterDistribution['Tinggi'] }}], backgroundColor: ['rgba(244,63,94,0.85)','rgba(245,158,11,0.85)','rgba(20,184,166,0.85)'], borderWidth: 3, borderColor: theme.borderColor, hoverOffset: 8 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: theme.textColor, padding: 16, font: { size: 11, weight: '500' }, usePointStyle: true, pointStyle: 'circle', boxWidth: 8 } }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, titleFont: { size: 13, weight: 'bold' } } } }
     });
-    new Chart(document.getElementById('incomeBar').getContext('2d'), {
+
+    const barChart = new Chart(document.getElementById('incomeBar').getContext('2d'), {
         type: 'bar',
         data: { labels: ['Ekonomi Rendah','Ekonomi Menengah','Ekonomi Mampu'], datasets: [{ label: 'Rata-rata Pendapatan', data: [{{ $avgIncomePerCluster['Rendah'] }}, {{ $avgIncomePerCluster['Sedang'] }}, {{ $avgIncomePerCluster['Tinggi'] }}], backgroundColor: ['rgba(244,63,94,0.8)','rgba(245,158,11,0.8)','rgba(20,184,166,0.8)'], borderColor: ['rgb(244,63,94)','rgb(245,158,11)','rgb(20,184,166)'], borderWidth: 2, borderRadius: 12, borderSkipped: false }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, displayColors: false, callbacks: { label: ctx => 'Rp ' + ctx.raw.toLocaleString('id-ID') } } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 10 }, callback: v => 'Rp ' + (v/1000000).toFixed(1) + 'jt' }, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { ticks: { font: { size: 11, weight: '600' } }, grid: { display: false } } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, displayColors: false, callbacks: { label: ctx => 'Rp ' + ctx.raw.toLocaleString('id-ID') } } }, scales: { y: { beginAtZero: true, ticks: { color: theme.textColor, font: { size: 10 }, callback: v => 'Rp ' + (v/1000000).toFixed(1) + 'jt' }, grid: { color: theme.gridColor } }, x: { ticks: { color: theme.textColor, font: { size: 11, weight: '600' } }, grid: { display: false } } } }
     });
+
+    // Listen for theme changes to dynamically update chart colors
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class') {
+                const newTheme = getThemeConfig();
+                
+                // Update Doughnut
+                doughnutChart.data.datasets[0].borderColor = newTheme.borderColor;
+                doughnutChart.options.plugins.legend.labels.color = newTheme.textColor;
+                doughnutChart.update();
+
+                // Update Bar
+                barChart.options.scales.y.ticks.color = newTheme.textColor;
+                barChart.options.scales.x.ticks.color = newTheme.textColor;
+                barChart.options.scales.y.grid.color = newTheme.gridColor;
+                barChart.update();
+            }
+        });
+    });
+    observer.observe(document.documentElement, { attributes: true });
 });
 </script>
 @endpush

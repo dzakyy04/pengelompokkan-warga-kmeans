@@ -4,8 +4,8 @@
 @section('content')
 <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
     <div><h1 class="text-2xl font-bold text-gray-900 dark:text-white">Data Aset</h1><p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Kelola data master aset</p></div>
-    <button onclick="openModal('create')" class="inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Tambah
+    <button onclick="openModal('create')" class="w-full md:w-auto justify-center inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Tambah Aset
     </button>
 </div>
 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Estimasi Nilai (Rp) <span class="text-red-500">*</span></label>
-                    <input type="number" name="estimasi_nilai" id="inputNilai" required min="0" class="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition-colors">
+                    <input type="text" name="estimasi_nilai" id="inputNilai" required oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')" class="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition-colors">
                     @error('estimasi_nilai')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="flex gap-3 justify-end">
@@ -84,7 +84,8 @@ function openModal(mode, id, nama, nilai) {
         form.action = '{{ url("admin/master-aset") }}/' + id;
         method.innerHTML = '<input type="hidden" name="_method" value="PUT">';
         document.getElementById('inputNama').value = nama || '';
-        document.getElementById('inputNilai').value = nilai || 0;
+        const nilaiFormatted = nilai ? String(nilai).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+        document.getElementById('inputNilai').value = nilaiFormatted;
     } else {
         title.textContent = 'Tambah Aset';
         btn.textContent = 'Simpan';

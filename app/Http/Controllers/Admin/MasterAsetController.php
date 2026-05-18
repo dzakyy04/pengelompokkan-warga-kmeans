@@ -21,9 +21,11 @@ class MasterAsetController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('estimasi_nilai')) {
+            $request->merge(['estimasi_nilai' => str_replace('.', '', $request->estimasi_nilai)]);
+        }
         $request->validate(['nama' => 'required|max:255', 'estimasi_nilai' => 'required|numeric|min:0']);
         $data = $request->only('nama', 'estimasi_nilai');
-        $data['estimasi_nilai'] = (int) str_replace('.', '', $data['estimasi_nilai']);
         MasterAset::create($data);
         return redirect()->route('admin.master-aset.index')->with('success', 'Aset berhasil ditambahkan.');
     }
@@ -35,9 +37,11 @@ class MasterAsetController extends Controller
 
     public function update(Request $request, MasterAset $masterAset)
     {
+        if ($request->has('estimasi_nilai')) {
+            $request->merge(['estimasi_nilai' => str_replace('.', '', $request->estimasi_nilai)]);
+        }
         $request->validate(['nama' => 'required|max:255', 'estimasi_nilai' => 'required|numeric|min:0']);
         $data = $request->only('nama', 'estimasi_nilai');
-        $data['estimasi_nilai'] = (int) str_replace('.', '', $data['estimasi_nilai']);
         $masterAset->update($data);
         return redirect()->route('admin.master-aset.index')->with('success', 'Aset berhasil diperbarui.');
     }

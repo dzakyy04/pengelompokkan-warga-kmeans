@@ -22,23 +22,25 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             @include('admin.partials.header')
 
-            <main class="flex-1 overflow-y-auto p-6 lg:p-8">
-                {{-- Flash Messages --}}
-                @if(session('success'))
-                <div class="mb-4 p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-700 dark:text-emerald-400 text-sm font-medium">
-                    {{ session('success') }}
-                </div>
-                @endif
-                @if(session('error'))
-                <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400 text-sm font-medium">
-                    {{ session('error') }}
-                </div>
-                @endif
+            <main class="flex-1 overflow-y-auto flex flex-col">
+                <div class="flex-1 p-6 lg:p-8">
+                    {{-- Flash Messages --}}
+                    @if(session('success'))
+                    <div class="mb-4 p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-700 dark:text-emerald-400 text-sm font-medium">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+                    @if(session('error'))
+                    <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400 text-sm font-medium">
+                        {{ session('error') }}
+                    </div>
+                    @endif
 
-                @yield('content')
+                    @yield('content')
+                </div>
+
+                @include('admin.partials.footer')
             </main>
-
-            @include('admin.partials.footer')
         </div>
     </div>
 
@@ -49,11 +51,15 @@
             const overlay = document.getElementById('overlay');
 
             function toggleSidebar() {
-                sidebar.classList.toggle('sidebar-collapsed');
-                sidebar.classList.toggle('sidebar-expanded');
                 if (window.innerWidth < 1024) {
                     sidebar.classList.toggle('-translate-x-full');
                     overlay.classList.toggle('hidden');
+                    // Always ensure it is expanded when sliding in on mobile
+                    sidebar.classList.add('sidebar-expanded');
+                    sidebar.classList.remove('sidebar-collapsed');
+                } else {
+                    sidebar.classList.toggle('sidebar-collapsed');
+                    sidebar.classList.toggle('sidebar-expanded');
                 }
             }
 
@@ -104,7 +110,6 @@
         .sidebar-collapsed .flex.items-center.px-6 { justify-content: center; padding-left: 1rem; padding-right: 1rem; }
         .sidebar-collapsed nav a, .sidebar-collapsed nav button { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
         .sidebar-collapsed nav a svg, .sidebar-collapsed nav button svg { margin-right: 0; }
-        .sidebar-collapsed #profileDropdown { left: 0.5rem; right: auto; min-width: 12rem; }
         @media (max-width: 1023px) {
             #sidebar { transform: translateX(-100%); }
             #sidebar:not(.-translate-x-full) { transform: translateX(0); }
