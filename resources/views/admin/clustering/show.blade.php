@@ -105,7 +105,7 @@
             <thead class="bg-gray-50 dark:bg-slate-700/50"><tr>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">No</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Nama Warga</th>
-                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pekerjaan</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pendidikan KK</th>
                 <th class="px-4 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pendapatan</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Kelompok</th>
             </tr></thead>
@@ -114,7 +114,7 @@
                 <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-700/50 transition-colors">
                     <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $loop->iteration }}</td>
                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $r->warga->nama_lengkap ?? '-' }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->pekerjaan->nama ?? '-' }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->pendidikan->nama ?? '-' }}</td>
                     <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">Rp {{ number_format($r->warga->pendapatan ?? 0, 0, ',', '.') }}</td>
                     <td class="px-4 py-3 text-center">
                         <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($r->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">

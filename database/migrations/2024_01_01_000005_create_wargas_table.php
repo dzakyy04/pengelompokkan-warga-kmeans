@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->string('nama_lengkap');
             $table->string('nik', 16)->unique();
             $table->string('rt_rw')->nullable();
-            $table->foreignId('pekerjaan_id')->constrained('master_pekerjaan')->onDelete('restrict');
+            $table->foreignId('pendidikan_id')->constrained('master_pendidikan')->onDelete('restrict');
             $table->decimal('pendapatan', 15, 0)->default(0);
             $table->integer('jumlah_tanggungan')->default(0);
             $table->foreignId('kondisi_rumah_id')->constrained('master_kondisi_rumah')->onDelete('restrict');

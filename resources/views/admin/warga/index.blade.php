@@ -45,9 +45,9 @@
                 <tr>
                     <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">NIK</th>
                     <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Nama</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pekerjaan</th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pendidikan KK</th>
                     <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kondisi Rumah</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Aset</th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Bansos</th>
                     <th class="px-4 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pendapatan</th>
                     <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Tanggungan</th>
                     <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kelompok</th>
@@ -59,9 +59,9 @@
                 <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-700/50 transition-colors">
                     <td class="px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400">{{ $w->nik }}</td>
                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $w->nama_lengkap }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $w->pekerjaan->nama ?? '-' }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $w->pendidikan->nama ?? '-' }}</td>
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $w->kondisiRumah->nama ?? '-' }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400 truncate max-w-[150px]" title="{{ $w->asets->pluck('nama')->join(', ') }}">{{ $w->asets->pluck('nama')->join(', ') ?: '-' }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400 truncate max-w-[150px]" title="{{ $w->bansos->pluck('nama')->join(', ') }}">{{ $w->bansos->pluck('nama')->join(', ') ?: '-' }}</td>
                     <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">Rp {{ number_format($w->pendapatan, 0, ',', '.') }}</td>
                     <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{{ $w->jumlah_tanggungan }}</td>
                     <td class="px-4 py-3 text-center">
@@ -166,7 +166,7 @@
         document.getElementById(id).classList.add('hidden');
         document.body.style.overflow = '';
     }
-    
+
     document.addEventListener('DOMContentLoaded', function() {
         @if($errors->any())
             @if(old('_method') == 'PUT' && old('id'))

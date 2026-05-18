@@ -49,34 +49,34 @@
         </table>
     </div>
 
-    @if($session->target_encoding_map)
     <div class="section">
-        <div class="section-title">Target Encoding — Rata-rata Pendapatan per Pekerjaan</div>
+        <div class="section-title">Fitur K-Means yang Digunakan</div>
         <table class="summary-table">
-            <thead><tr><th>Pekerjaan</th><th class="text-right">Rata-rata Pendapatan</th></tr></thead>
+            <thead><tr><th>No</th><th>Fitur</th><th>Keterangan</th></tr></thead>
             <tbody>
-            @foreach($session->target_encoding_map as $pekerjaan => $avg)
-            <tr><td>{{ $pekerjaan }}</td><td class="text-right">Rp {{ number_format($avg, 0, ',', '.') }}</td></tr>
-            @endforeach
+                <tr><td class="text-center">1</td><td>Pendapatan</td><td>Pendapatan rata-rata per bulan (Rupiah)</td></tr>
+                <tr><td class="text-center">2</td><td>Jumlah Tanggungan</td><td>Jumlah anggota keluarga yang ditanggung</td></tr>
+                <tr><td class="text-center">3</td><td>Pendidikan Kepala Keluarga</td><td>Skor tingkat pendidikan kepala keluarga (semakin tinggi, semakin baik)</td></tr>
+                <tr><td class="text-center">4</td><td>Kondisi Rumah</td><td>Skor kelayakan kondisi rumah (1=Menumpang, 3=Milik Sendiri)</td></tr>
+                <tr><td class="text-center">5</td><td>Penerima Bansos</td><td>Jumlah jenis bansos yang diterima (PKH, BLT, BPNT, dll)</td></tr>
             </tbody>
         </table>
     </div>
-    @endif
 
     <div class="section">
         <div class="section-title">Nilai Centroid per Cluster</div>
         <table class="summary-table">
-            <thead><tr><th>Cluster</th><th>Anggota</th><th>Pendapatan</th><th>Pekerjaan</th><th>Tanggungan</th><th>Kondisi Rumah</th><th>Aset</th></tr></thead>
+            <thead><tr><th>Cluster</th><th>Anggota</th><th>Pendapatan</th><th>Tanggungan</th><th>Pendidikan</th><th>Kondisi Rumah</th><th>Bansos</th></tr></thead>
             <tbody>
             @foreach($session->centroids->sortBy('cluster') as $c)
             <tr class="cluster-{{ strtolower($c->label) }}">
                 <td><span class="badge badge-{{ strtolower($c->label) }}">{{ $c->label }}</span></td>
                 <td class="text-center">{{ $c->jumlah_anggota }}</td>
                 <td class="text-right">{{ number_format($c->centroid_pendapatan, 4) }}</td>
-                <td class="text-right">{{ number_format($c->centroid_pekerjaan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_tanggungan, 4) }}</td>
+                <td class="text-right">{{ number_format($c->centroid_pendidikan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_kondisi_rumah, 4) }}</td>
-                <td class="text-right">{{ number_format($c->centroid_aset, 4) }}</td>
+                <td class="text-right">{{ number_format($c->centroid_bansos, 4) }}</td>
             </tr>
             @endforeach
             </tbody>
@@ -100,17 +100,18 @@
             <div class="section-title">Cluster {{ $label }} — {{ $members->count() }} Warga</div>
             <div class="rekomendasi">{{ $rekomendasi[$label] }}</div>
             <table class="summary-table">
-                <thead><tr><th>No</th><th>NIK</th><th>Nama</th><th>Pekerjaan</th><th>Pendapatan</th><th>Tanggungan</th><th>Kondisi Rumah</th></tr></thead>
+                <thead><tr><th>No</th><th>NIK</th><th>Nama</th><th>Pendidikan KK</th><th>Pendapatan</th><th>Tanggungan</th><th>Kondisi Rumah</th><th>Bansos</th></tr></thead>
                 <tbody>
                 @foreach($members->values() as $i => $r)
                 <tr>
                     <td class="text-center">{{ $i + 1 }}</td>
                     <td>{{ $r->warga->nik }}</td>
                     <td>{{ $r->warga->nama_lengkap }}</td>
-                    <td>{{ $r->warga->pekerjaan->nama ?? '-' }}</td>
+                    <td>{{ $r->warga->pendidikan->nama ?? '-' }}</td>
                     <td class="text-right">Rp {{ number_format($r->warga->pendapatan, 0, ',', '.') }}</td>
                     <td class="text-center">{{ $r->warga->jumlah_tanggungan }}</td>
                     <td>{{ $r->warga->kondisiRumah->nama ?? '-' }}</td>
+                    <td>{{ $r->warga->bansos->pluck('nama')->join(', ') ?: '-' }}</td>
                 </tr>
                 @endforeach
                 </tbody>

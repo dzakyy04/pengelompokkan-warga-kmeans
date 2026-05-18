@@ -3,9 +3,9 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ClusteringController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\MasterAsetController;
+use App\Http\Controllers\Admin\MasterBansosController;
 use App\Http\Controllers\Admin\MasterKondisiRumahController;
-use App\Http\Controllers\Admin\MasterPekerjaanController;
+use App\Http\Controllers\Admin\MasterPendidikanController;
 use App\Http\Controllers\Admin\WargaController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,9 +24,9 @@ Route::prefix('admin')->middleware(['web', \App\Http\Middleware\AdminMiddleware:
     Route::resource('warga', WargaController::class)->names('admin.warga');
 
     // Master Data (admin only)
-    Route::resource('master-pekerjaan', MasterPekerjaanController::class)->names('admin.master-pekerjaan');
+    Route::resource('master-pendidikan', MasterPendidikanController::class)->names('admin.master-pendidikan')->except(['create', 'edit', 'show']);
     Route::resource('master-kondisi-rumah', MasterKondisiRumahController::class)->names('admin.master-kondisi-rumah');
-    Route::resource('master-aset', MasterAsetController::class)->names('admin.master-aset');
+    Route::resource('master-bansos', MasterBansosController::class)->names('admin.master-bansos')->except(['create', 'edit', 'show']);
 
     // Clustering
     Route::get('clustering', [ClusteringController::class, 'index'])->name('admin.clustering.index');

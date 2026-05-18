@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ClusteringSession extends Model
 {
-    protected $fillable = ['user_id', 'jumlah_cluster', 'max_iterasi', 'iterasi_tercapai', 'target_encoding_map', 'status', 'catatan_validasi', 'validated_by', 'validated_at'];
-    protected $casts = ['target_encoding_map' => 'array', 'validated_at' => 'datetime'];
+    protected $fillable = ['user_id', 'jumlah_cluster', 'max_iterasi', 'iterasi_tercapai', 'status', 'catatan_validasi', 'validated_by', 'validated_at'];
+    protected $casts = ['validated_at' => 'datetime'];
 
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
     public function validatedByUser(): BelongsTo { return $this->belongsTo(User::class, 'validated_by'); }

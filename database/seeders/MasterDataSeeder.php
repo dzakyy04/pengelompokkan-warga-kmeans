@@ -1,18 +1,28 @@
 <?php
 namespace Database\Seeders;
-use App\Models\MasterPekerjaan;
+use App\Models\MasterPendidikan;
 use App\Models\MasterKondisiRumah;
-use App\Models\MasterAset;
+use App\Models\MasterBansos;
 use Illuminate\Database\Seeder;
 
 class MasterDataSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['PNS / ASN / TNI / Polri', 'Pegawai Swasta', 'Wiraswasta / Pedagang', 'Petani / Nelayan', 'Buruh Harian / Buruh Tani', 'Tidak Bekerja / IRT'] as $nama) {
-            MasterPekerjaan::firstOrCreate(['nama' => $nama]);
+        // Master Pendidikan Kepala Keluarga (skor: semakin tinggi, semakin tinggi tingkat pendidikannya)
+        foreach ([
+            ['nama' => 'Tidak Sekolah', 'skor' => 1],
+            ['nama' => 'SD / Sederajat', 'skor' => 2],
+            ['nama' => 'SMP / Sederajat', 'skor' => 3],
+            ['nama' => 'SMA / Sederajat', 'skor' => 4],
+            ['nama' => 'D3 / Diploma', 'skor' => 5],
+            ['nama' => 'S1 / Sarjana', 'skor' => 6],
+            ['nama' => 'S2 / S3 / Pascasarjana', 'skor' => 7],
+        ] as $data) {
+            MasterPendidikan::firstOrCreate(['nama' => $data['nama']], $data);
         }
 
+        // Master Kondisi Rumah
         foreach ([
             ['nama' => 'Milik Sendiri', 'skor' => 3],
             ['nama' => 'Sewa', 'skor' => 2],
@@ -21,16 +31,16 @@ class MasterDataSeeder extends Seeder
             MasterKondisiRumah::firstOrCreate(['nama' => $data['nama']], $data);
         }
 
+        // Master Bansos (Bantuan Sosial)
         foreach ([
-            ['nama' => 'Mobil', 'estimasi_nilai' => 150000000],
-            ['nama' => 'Tanah / Lahan', 'estimasi_nilai' => 100000000],
-            ['nama' => 'Motor', 'estimasi_nilai' => 15000000],
-            ['nama' => 'Laptop / Komputer', 'estimasi_nilai' => 5000000],
-            ['nama' => 'AC', 'estimasi_nilai' => 4000000],
-            ['nama' => 'Kulkas', 'estimasi_nilai' => 3000000],
-            ['nama' => 'TV', 'estimasi_nilai' => 2000000],
+            ['nama' => 'PKH', 'keterangan' => 'Program Keluarga Harapan'],
+            ['nama' => 'BLT', 'keterangan' => 'Bantuan Langsung Tunai'],
+            ['nama' => 'BPNT / Sembako', 'keterangan' => 'Bantuan Pangan Non-Tunai'],
+            ['nama' => 'KIS', 'keterangan' => 'Kartu Indonesia Sehat'],
+            ['nama' => 'KIP', 'keterangan' => 'Kartu Indonesia Pintar'],
+            ['nama' => 'BSU', 'keterangan' => 'Bantuan Subsidi Upah'],
         ] as $data) {
-            MasterAset::firstOrCreate(['nama' => $data['nama']], $data);
+            MasterBansos::firstOrCreate(['nama' => $data['nama']], $data);
         }
     }
 }

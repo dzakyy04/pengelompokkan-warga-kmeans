@@ -11,10 +11,10 @@ return new class extends Migration {
             $table->integer('cluster');
             $table->string('label');
             $table->decimal('centroid_pendapatan', 15, 6)->nullable();
-            $table->decimal('centroid_pekerjaan', 15, 6)->nullable();
             $table->decimal('centroid_tanggungan', 15, 6)->nullable();
+            $table->decimal('centroid_pendidikan', 15, 6)->nullable();
             $table->decimal('centroid_kondisi_rumah', 15, 6)->nullable();
-            $table->decimal('centroid_aset', 15, 6)->nullable();
+            $table->decimal('centroid_bansos', 15, 6)->nullable();
             $table->integer('jumlah_anggota')->default(0);
             $table->timestamps();
         });

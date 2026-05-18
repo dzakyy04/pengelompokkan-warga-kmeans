@@ -41,7 +41,7 @@ class ClusteringController extends Controller
 
     public function show($id)
     {
-        $session = ClusteringSession::with(['centroids', 'user', 'validatedByUser', 'results.warga.pekerjaan', 'results.warga.kondisiRumah'])->findOrFail($id);
+        $session = ClusteringSession::with(['centroids', 'user', 'validatedByUser', 'results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos'])->findOrFail($id);
         return view('admin.clustering.show', compact('session'));
     }
 
@@ -78,7 +78,7 @@ class ClusteringController extends Controller
 
     public function downloadPdf($id)
     {
-        $session = ClusteringSession::with(['results.warga.pekerjaan', 'results.warga.kondisiRumah', 'results.warga.asets', 'centroids', 'user', 'validatedByUser'])->findOrFail($id);
+        $session = ClusteringSession::with(['results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos', 'centroids', 'user', 'validatedByUser'])->findOrFail($id);
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.laporan-clustering', ['session' => $session]);
         return response()->streamDownload(fn() => print($pdf->output()), "laporan-clustering-{$session->id}.pdf");
     }

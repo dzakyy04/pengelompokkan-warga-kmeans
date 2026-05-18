@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->integer('jumlah_cluster')->default(3);
             $table->integer('max_iterasi')->default(100);
             $table->integer('iterasi_tercapai')->nullable();
-            $table->json('target_encoding_map')->nullable();
             $table->enum('status', ['pending', 'completed', 'validated', 'rejected'])->default('pending');
             $table->text('catatan_validasi')->nullable();
             $table->foreignId('validated_by')->nullable()->constrained('users')->onDelete('set null');

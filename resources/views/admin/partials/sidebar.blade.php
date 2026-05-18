@@ -42,12 +42,13 @@
 
         {{-- Master Data --}}
         <div class="px-3 pt-4 pb-1 sidebar-text"><p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Master Data</p></div>
-        <a href="{{ route('admin.master-pekerjaan.index') }}"
-            class="flex items-center px-3 py-2.5 mb-1 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200 group {{ request()->routeIs('admin.master-pekerjaan.*') ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
-            <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.master-pekerjaan.*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        <a href="{{ route('admin.master-pendidikan.index') }}"
+            class="flex items-center px-3 py-2.5 mb-1 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200 group {{ request()->routeIs('admin.master-pendidikan.*') ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
+            <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.master-pendidikan.*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
             </svg>
-            <span class="text-sm sidebar-text">Pekerjaan</span>
+            <span class="text-sm sidebar-text">Pendidikan</span>
         </a>
         <a href="{{ route('admin.master-kondisi-rumah.index') }}"
             class="flex items-center px-3 py-2.5 mb-1 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200 group {{ request()->routeIs('admin.master-kondisi-rumah.*') ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
@@ -56,12 +57,12 @@
             </svg>
             <span class="text-sm sidebar-text">Kondisi Rumah</span>
         </a>
-        <a href="{{ route('admin.master-aset.index') }}"
-            class="flex items-center px-3 py-2.5 mb-1 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200 group {{ request()->routeIs('admin.master-aset.*') ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
-            <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.master-aset.*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        <a href="{{ route('admin.master-bansos.index') }}"
+            class="flex items-center px-3 py-2.5 mb-1 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200 group {{ request()->routeIs('admin.master-bansos.*') ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-500 dark:text-gray-400' }}">
+            <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.master-bansos.*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
             </svg>
-            <span class="text-sm sidebar-text">Aset</span>
+            <span class="text-sm sidebar-text">Bansos</span>
         </a>
         @endif
 

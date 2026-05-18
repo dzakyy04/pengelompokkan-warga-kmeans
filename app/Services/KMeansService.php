@@ -14,32 +14,28 @@ class KMeansService
 {
     public function process(int $numClusters = 3, int $maxIterations = 100): ClusteringSession
     {
-        $wargas = Warga::with(['pekerjaan', 'kondisiRumah', 'asets'])->get();
+        $wargas = Warga::with(['pendidikan', 'kondisiRumah', 'bansos'])->get();
 
         if ($wargas->count() < $numClusters) {
             throw new \Exception("Jumlah data warga ({$wargas->count()}) kurang dari jumlah cluster ({$numClusters}).");
         }
 
-        // 1. Target Encoding for pekerjaan (rata-rata pendapatan per pekerjaan)
-        $targetEncoding = $wargas->groupBy(fn($w) => $w->pekerjaan->nama)
-            ->map(fn($group) => round($group->avg('pendapatan'), 0))
-            ->toArray();
-
-        // 2. Build raw feature matrix
+        // 1. Build raw feature matrix
+        // Fitur: pendapatan, tanggungan, pendidikan kepala keluarga (skor), kondisi rumah (skor), penerima bansos (jumlah jenis)
         $rawSamples = [];
         $wargaList = [];
         foreach ($wargas as $warga) {
             $rawSamples[] = [
                 (float) $warga->pendapatan,
-                (float) ($targetEncoding[$warga->pekerjaan->nama] ?? 0),
                 (float) $warga->jumlah_tanggungan,
-                (float) $warga->kondisiRumah->skor,
-                (float) $warga->asets->sum('estimasi_nilai'),
+                (float) ($warga->pendidikan->skor ?? 0),
+                (float) ($warga->kondisiRumah->skor ?? 0),
+                (float) $warga->bansos->count(),
             ];
             $wargaList[] = $warga;
         }
 
-        // 3. Min-Max Normalization
+        // 2. Min-Max Normalization
         $numFeatures = 5;
         $mins = $maxs = [];
         for ($i = 0; $i < $numFeatures; $i++) {
@@ -58,11 +54,11 @@ class KMeansService
             $normalized[] = $row;
         }
 
-        // 4. Run K-Means via php-ml
+        // 3. Run K-Means via php-ml
         $kmeans = new KMeans($numClusters);
         $clusterResults = $kmeans->cluster($normalized);
 
-        // 5. Map results back using nearest-neighbor matching (robust against float precision)
+        // 4. Map results back using nearest-neighbor matching (robust against float precision)
         $usedIndices = [];
         $wargaClusterMap = [];
         $clusterCentroidData = [];
@@ -97,7 +93,7 @@ class KMeansService
             }
         }
 
-        // 6. Auto-label clusters by average pendapatan (Rendah < Sedang < Tinggi)
+        // 5. Auto-label clusters by average pendapatan (Rendah < Sedang < Tinggi)
         $grouped = collect($wargaClusterMap)->groupBy('cluster');
         $clusterAvg = [];
         foreach ($grouped as $ci => $members) {
@@ -114,13 +110,12 @@ class KMeansService
             $i++;
         }
 
-        // 7. Save to database
-        return DB::transaction(function () use ($wargaClusterMap, $clusterCentroidData, $grouped, $labelMap, $targetEncoding, $numClusters, $maxIterations) {
+        // 6. Save to database
+        return DB::transaction(function () use ($wargaClusterMap, $clusterCentroidData, $grouped, $labelMap, $numClusters, $maxIterations) {
             $session = ClusteringSession::create([
                 'user_id' => Auth::id(),
                 'jumlah_cluster' => $numClusters,
                 'max_iterasi' => $maxIterations,
-                'target_encoding_map' => $targetEncoding,
                 'status' => 'completed',
             ]);
 
@@ -140,10 +135,10 @@ class KMeansService
                     'cluster' => $ci,
                     'label' => $labelMap[$ci],
                     'centroid_pendapatan' => $centroid[0] ?? 0,
-                    'centroid_pekerjaan' => $centroid[1] ?? 0,
-                    'centroid_tanggungan' => $centroid[2] ?? 0,
+                    'centroid_tanggungan' => $centroid[1] ?? 0,
+                    'centroid_pendidikan' => $centroid[2] ?? 0,
                     'centroid_kondisi_rumah' => $centroid[3] ?? 0,
-                    'centroid_aset' => $centroid[4] ?? 0,
+                    'centroid_bansos' => $centroid[4] ?? 0,
                     'jumlah_anggota' => ($grouped[$ci] ?? collect())->count(),
                 ]);
             }
