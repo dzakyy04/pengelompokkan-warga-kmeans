@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="mb-6">
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Dashboard</h1>
-    <p class="text-gray-600">Ringkasan data dan hasil pengelompokan warga.</p>
+    <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">Dashboard</h1>
+    <p class="text-gray-600 dark:text-gray-400">Ringkasan data dan hasil pengelompokan warga.</p>
 </div>
 
 {{-- Stat Cards --}}
@@ -62,16 +62,16 @@
 {{-- Charts --}}
 <div class="grid grid-cols-12 gap-4 mb-6">
     <div class="col-span-12 lg:col-span-4">
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-200 p-6 h-full">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Sebaran Kelompok Warga</h2>
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-full transition-colors duration-200">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Sebaran Kelompok Warga</h2>
             <div class="h-64 flex items-center justify-center"><canvas id="clusterDoughnut"></canvas></div>
         </div>
     </div>
     <div class="col-span-12 lg:col-span-8">
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-200 p-6 h-full">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-full transition-colors duration-200">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-900">Rata-rata Pendapatan per Kelompok</h2>
-                <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-semibold rounded-xl">{{ $totalWarga }} Warga</span>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Rata-rata Pendapatan per Kelompok</h2>
+                <span class="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold rounded-xl">{{ $totalWarga }} Warga</span>
             </div>
             <div class="h-64"><canvas id="incomeBar"></canvas></div>
         </div>
@@ -79,9 +79,9 @@
 </div>
 
 {{-- Proses Terakhir --}}
-<div class="bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
+<div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
     <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-bold text-gray-900">Pengelompokan Terakhir</h2>
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Pengelompokan Terakhir</h2>
         @if($latestSession)
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold {{ match($latestSession->status) { 'validated' => 'bg-emerald-100 text-emerald-700', 'completed' => 'bg-blue-100 text-blue-700', 'rejected' => 'bg-red-100 text-red-700', default => 'bg-amber-100 text-amber-700' } }}">
             @if($latestSession->status === 'validated')<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> Sudah Disetujui
@@ -94,25 +94,25 @@
     </div>
     @if($latestSession)
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl">
-            <span class="text-sm text-gray-500">Tanggal Proses</span>
-            <span class="text-sm font-bold text-gray-900">{{ $latestSession->created_at->format('d M Y, H:i') }}</span>
+        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Tanggal Proses</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $latestSession->created_at->format('d M Y, H:i') }}</span>
         </div>
-        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl">
-            <span class="text-sm text-gray-500">Jumlah Kelompok</span>
-            <span class="text-sm font-bold text-gray-900">{{ $latestSession->jumlah_cluster }} Kelompok</span>
+        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Jumlah Kelompok</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $latestSession->jumlah_cluster }} Kelompok</span>
         </div>
-        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl">
-            <span class="text-sm text-gray-500">Total Proses</span>
-            <span class="text-sm font-bold text-gray-900">{{ $totalSessions }} kali</span>
+        <div class="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Total Proses</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $totalSessions }} kali</span>
         </div>
     </div>
     <div class="mt-4">
         <a href="{{ route('admin.clustering.show', $latestSession->id) }}" class="inline-flex items-center text-sm text-emerald-600 hover:text-emerald-700 font-semibold">Lihat Detail Hasil &rarr;</a>
     </div>
     @else
-    <div class="text-center py-8 text-gray-400">
-        <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    <div class="text-center py-8 text-gray-400 dark:text-gray-500">
+        <svg class="w-12 h-12 mx-auto mb-2 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         <p class="text-sm font-medium">Belum ada proses pengelompokan</p>
         @if(auth()->user()->isAdmin())
         <a href="{{ route('admin.clustering.index') }}" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium mt-2 inline-block">Mulai Proses &rarr;</a>

@@ -6,9 +6,16 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin') — Pengelompokan Warga</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     @stack('styles')
 </head>
-<body class="bg-gray-50 font-[Inter]">
+<body class="bg-gray-50 dark:bg-slate-900 font-[Inter] transition-colors duration-200">
     <div class="flex h-screen overflow-hidden">
         @include('admin.partials.sidebar')
 
@@ -18,12 +25,12 @@
             <main class="flex-1 overflow-y-auto p-6 lg:p-8">
                 {{-- Flash Messages --}}
                 @if(session('success'))
-                <div class="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-sm font-medium">
+                <div class="mb-4 p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-700 dark:text-emerald-400 text-sm font-medium">
                     {{ session('success') }}
                 </div>
                 @endif
                 @if(session('error'))
-                <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+                <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400 text-sm font-medium">
                     {{ session('error') }}
                 </div>
                 @endif
@@ -55,6 +62,38 @@
             window.addEventListener('resize', function() {
                 if (window.innerWidth >= 1024) overlay.classList.add('hidden');
             });
+
+            // Profile Dropdown logic
+            const profileBtn = document.getElementById('profileBtn');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const profileChevron = document.getElementById('profileChevron');
+
+            if (profileBtn && profileDropdown) {
+                profileBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isHidden = profileDropdown.classList.toggle('hidden');
+                    if (profileChevron) {
+                        profileChevron.style.transform = isHidden ? '' : 'rotate(180deg)';
+                    }
+                });
+
+                document.addEventListener('click', function(event) {
+                    if (!profileBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
+                        profileDropdown.classList.add('hidden');
+                        if (profileChevron) profileChevron.style.transform = '';
+                    }
+                });
+            }
+
+            window.toggleTheme = function() {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.theme = 'light';
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.theme = 'dark';
+                }
+            };
         });
     </script>
 
@@ -65,6 +104,7 @@
         .sidebar-collapsed .flex.items-center.px-6 { justify-content: center; padding-left: 1rem; padding-right: 1rem; }
         .sidebar-collapsed nav a, .sidebar-collapsed nav button { justify-content: center; padding-left: 0.75rem; padding-right: 0.75rem; }
         .sidebar-collapsed nav a svg, .sidebar-collapsed nav button svg { margin-right: 0; }
+        .sidebar-collapsed #profileDropdown { left: 0.5rem; right: auto; min-width: 12rem; }
         @media (max-width: 1023px) {
             #sidebar { transform: translateX(-100%); }
             #sidebar:not(.-translate-x-full) { transform: translateX(0); }
