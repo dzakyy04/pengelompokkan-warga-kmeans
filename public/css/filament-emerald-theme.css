@@ -1,0 +1,169 @@
+/*
+ * Emerald Theme — Global Filament Overrides
+ * ─────────────────────────────────────────────
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+body, .fi-body { font-family: 'Inter', system-ui, -apple-system, sans-serif !important; }
+
+/* ═══ SIDEBAR ═══ */
+.fi-sidebar {
+    background: linear-gradient(180deg, #064e3b 0%, #065f46 40%, #047857 100%) !important;
+    border-right: none !important;
+    box-shadow: 4px 0 24px rgba(6, 78, 59, 0.15) !important;
+}
+.fi-sidebar-header { border-bottom: 1px solid rgba(255,255,255,0.1) !important; }
+.fi-sidebar-header a, .fi-sidebar-header span { color: #fff !important; font-weight: 700 !important; }
+.fi-sidebar-group-label {
+    color: rgba(167,243,208,0.7) !important;
+    font-size: 0.65rem !important; font-weight: 700 !important;
+    letter-spacing: 0.08em !important; text-transform: uppercase !important;
+}
+.fi-sidebar-item a, .fi-sidebar-item button {
+    color: rgba(209,250,229,0.85) !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.2s ease !important;
+}
+.fi-sidebar-item a:hover, .fi-sidebar-item button:hover {
+    background: rgba(255,255,255,0.12) !important; color: #fff !important;
+}
+.fi-sidebar-item-active > a, .fi-sidebar-item-active > button {
+    background: rgba(255,255,255,0.18) !important;
+    color: #fff !important; font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+.fi-sidebar-item-icon { color: rgba(167,243,208,0.6) !important; }
+.fi-sidebar-item a:hover .fi-sidebar-item-icon,
+.fi-sidebar-item-active .fi-sidebar-item-icon { color: #fff !important; }
+.fi-sidebar-group-button { color: rgba(167,243,208,0.7) !important; }
+.fi-sidebar-group-button:hover { color: #fff !important; }
+.fi-sidebar-footer {
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    background: rgba(0,0,0,0.1) !important;
+}
+.fi-sidebar-close-btn { color: rgba(255,255,255,0.7) !important; }
+.fi-sidebar-close-btn:hover { color: #fff !important; }
+.fi-sidebar-nav::-webkit-scrollbar { width: 4px; }
+.fi-sidebar-nav::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+.fi-sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+
+/* ═══ TOPBAR ═══ */
+.fi-topbar {
+    background: #fff !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+}
+
+/* ═══ TABLE CARDS ═══ */
+.fi-ta {
+    border-radius: 1.25rem !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(203,213,225,0.7) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+    transition: box-shadow 0.3s ease !important;
+}
+.fi-ta:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important; }
+.fi-ta-header-cell {
+    font-weight: 600 !important; font-size: 0.75rem !important;
+    text-transform: uppercase !important; letter-spacing: 0.04em !important;
+    color: #64748b !important;
+}
+.fi-ta-row { transition: background-color 0.15s ease !important; }
+.fi-ta-row:hover { background: rgba(236,253,245,0.5) !important; }
+
+/* ═══ SECTIONS (Forms / Infolists) ═══ */
+.fi-section {
+    border-radius: 1.25rem !important;
+    border: 1px solid rgba(203,213,225,0.7) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+    overflow: hidden !important;
+    transition: box-shadow 0.3s ease !important;
+}
+.fi-section:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important; }
+.fi-section-header-heading { font-weight: 700 !important; }
+
+/* ═══ FORM INPUTS ═══ */
+.fi-input { border-radius: 0.75rem !important; transition: all 0.2s ease !important; }
+.fi-input:focus-within {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.12) !important;
+}
+
+/* ═══ BUTTONS ═══ */
+.fi-btn {
+    border-radius: 0.75rem !important; font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+.fi-btn:hover { transform: translateY(-1px) !important; box-shadow: 0 4px 12px rgba(16,185,129,0.2) !important; }
+.fi-btn:active { transform: translateY(0) !important; }
+
+/* ═══ BADGES ═══ */
+.fi-badge { border-radius: 0.75rem !important; font-weight: 600 !important; }
+
+/* ═══ MODAL ═══ */
+.fi-modal-window { border-radius: 1.5rem !important; box-shadow: 0 20px 60px rgba(0,0,0,0.15) !important; }
+
+/* ═══ NOTIFICATIONS ═══ */
+.fi-no { border-radius: 1rem !important; box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important; }
+
+/* ═══ STATS WIDGET ═══ */
+.fi-wi-stats-overview-stat {
+    border-radius: 1.25rem !important;
+    border: 1px solid rgba(203,213,225,0.7) !important;
+    transition: all 0.3s ease !important;
+}
+.fi-wi-stats-overview-stat:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important; transform: translateY(-2px) !important; }
+
+/* ═══ CHART WIDGET ═══ */
+.fi-wi-chart {
+    border-radius: 1.25rem !important;
+    border: 1px solid rgba(203,213,225,0.7) !important;
+    transition: all 0.3s ease !important;
+}
+.fi-wi-chart:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important; }
+
+/* ═══ LOGIN PAGE ═══ */
+.fi-simple-layout {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 40%, #059669 70%, #10b981 100%) !important;
+}
+.fi-simple-main-ctn {
+    border-radius: 1.5rem !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important;
+}
+
+/* ═══ HEADER ═══ */
+.fi-header-heading { font-weight: 800 !important; }
+
+/* ═══ BREADCRUMBS ═══ */
+.fi-breadcrumbs a { color: #059669 !important; font-weight: 500 !important; }
+.fi-breadcrumbs a:hover { color: #047857 !important; }
+
+/* ═══ DROPDOWN ═══ */
+.fi-dropdown-panel {
+    border-radius: 0.75rem !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+    border: 1px solid rgba(203,213,225,0.7) !important;
+}
+
+/* ═══ PAGE ANIMATION ═══ */
+.fi-main > * { animation: emGlobalFadeUp 0.4s ease-out both; }
+@keyframes emGlobalFadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ TABLE SCROLLBAR ═══ */
+.fi-ta-content::-webkit-scrollbar { width: 5px; height: 5px; }
+.fi-ta-content::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.fi-ta-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+/* ═══ DARK MODE ═══ */
+.dark .fi-sidebar { background: linear-gradient(180deg, #022c22 0%, #064e3b 50%, #065f46 100%) !important; }
+.dark .fi-topbar { background: #111827 !important; border-bottom: 1px solid rgba(255,255,255,0.06) !important; }
+.dark .fi-ta { border-color: rgba(255,255,255,0.06) !important; }
+.dark .fi-ta-row:hover { background: rgba(16,185,129,0.06) !important; }
+.dark .fi-ta-header-cell { color: #94a3b8 !important; }
+.dark .fi-section { border-color: rgba(255,255,255,0.06) !important; }
+.dark .fi-simple-main-ctn { background: rgba(17,24,39,0.95) !important; }
+.dark .fi-wi-stats-overview-stat { border-color: rgba(255,255,255,0.06) !important; }

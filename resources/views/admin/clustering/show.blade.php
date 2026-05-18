@@ -1,0 +1,130 @@
+@extends('admin.layout.app')
+@section('title', 'Hasil Pengelompokan')
+@section('page-title', 'Hasil Pengelompokan')
+
+@section('content')
+<div class="mb-6">
+    <a href="{{ route('admin.clustering.history') }}" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">&larr; Kembali ke Riwayat</a>
+</div>
+
+{{-- Info + Status + Aksi --}}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <h3 class="font-bold text-gray-900 mb-3">Informasi Proses</h3>
+        <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-gray-500">Diproses Oleh</span><span class="font-medium">{{ $session->user->name ?? '-' }}</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Tanggal</span><span class="font-medium">{{ $session->created_at->format('d M Y, H:i') }}</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Jumlah Kelompok</span><span class="font-bold">{{ $session->jumlah_cluster }}</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Total Warga</span><span class="font-bold">{{ $session->results->count() }} orang</span></div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <h3 class="font-bold text-gray-900 mb-3">Status</h3>
+        <div class="mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold {{ match($session->status) { 'validated' => 'bg-emerald-100 text-emerald-700', 'completed' => 'bg-blue-100 text-blue-700', 'rejected' => 'bg-red-100 text-red-700', default => 'bg-amber-100 text-amber-700' } }}">
+                {{ match($session->status) { 'validated' => '✓ Sudah Disetujui', 'completed' => '⏳ Menunggu Persetujuan', 'rejected' => '✗ Ditolak', default => 'Diproses' } }}
+            </span>
+        </div>
+        @if($session->validatedByUser)
+        <div class="text-sm space-y-1 mt-3">
+            <p class="text-gray-500">Disetujui oleh: <span class="font-medium text-gray-900">{{ $session->validatedByUser->name }}</span></p>
+            <p class="text-gray-500">Pada: <span class="font-medium text-gray-900">{{ $session->validated_at?->format('d M Y, H:i') }}</span></p>
+        </div>
+        @endif
+        @if($session->catatan_validasi)
+        <div class="mt-3 p-3 bg-gray-50 rounded-xl text-sm text-gray-600"><strong>Catatan:</strong> {{ $session->catatan_validasi }}</div>
+        @endif
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <h3 class="font-bold text-gray-900 mb-3">Aksi</h3>
+        @if(auth()->user()->isKepalaDesa() && $session->status === 'completed')
+        <div class="space-y-3">
+            <form method="POST" action="{{ route('admin.clustering.validate', $session->id) }}">
+                @csrf
+                <textarea name="catatan_validasi" placeholder="Catatan (opsional)" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none mb-2"></textarea>
+                <button type="submit" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">
+                    ✓ Setujui Hasil
+                </button>
+            </form>
+            <form method="POST" action="{{ route('admin.clustering.reject', $session->id) }}">
+                @csrf
+                <textarea name="catatan_validasi" placeholder="Alasan penolakan (wajib diisi)" rows="2" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none mb-2"></textarea>
+                <button type="submit" class="w-full px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition">
+                    ✗ Tolak Hasil
+                </button>
+            </form>
+        </div>
+        @elseif($session->status === 'validated')
+        <a href="{{ route('admin.clustering.pdf', $session->id) }}" class="inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition w-full justify-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Download Laporan PDF
+        </a>
+        @else
+        <p class="text-sm text-gray-400">Tidak ada aksi yang tersedia saat ini.</p>
+        @endif
+    </div>
+</div>
+
+{{-- Ringkasan per Kelompok --}}
+@if($session->centroids->count() > 0)
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    @foreach($session->centroids->sortBy('cluster') as $c)
+    @php
+        $colors = match($c->label) {
+            'Rendah' => ['from-rose-500 to-rose-600', 'text-rose-100', 'bg-white/20'],
+            'Sedang' => ['from-amber-500 to-amber-600', 'text-amber-100', 'bg-white/20'],
+            'Tinggi' => ['from-teal-500 to-teal-600', 'text-teal-100', 'bg-white/20'],
+            default  => ['from-gray-500 to-gray-600', 'text-gray-100', 'bg-white/20'],
+        };
+        $labelFriendly = match($c->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $c->label };
+    @endphp
+    <div class="bg-gradient-to-br {{ $colors[0] }} rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+        <div class="relative z-10">
+            <h4 class="text-lg font-bold mb-1">{{ $labelFriendly }}</h4>
+            <p class="text-4xl font-extrabold my-2">{{ $c->jumlah_anggota }} <span class="text-base font-semibold {{ $colors[1] }}">orang</span></p>
+            <p class="text-sm {{ $colors[1] }} opacity-80">
+                {{ match($c->label) { 'Rendah' => 'Memerlukan bantuan bahan pokok', 'Sedang' => 'Cocok untuk pelatihan UMKM', 'Tinggi' => 'Potensi sebagai mentor', default => '' } }}
+            </p>
+        </div>
+    </div>
+    @endforeach
+</div>
+@endif
+
+{{-- Daftar Warga per Kelompok --}}
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b border-gray-200">
+        <h3 class="text-lg font-bold text-gray-900">Daftar Warga per Kelompok</h3>
+        <p class="text-sm text-gray-500 mt-1">{{ $session->results->count() }} warga telah dikelompokkan</p>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50"><tr>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 text-xs uppercase">No</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 text-xs uppercase">Nama Warga</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 text-xs uppercase">Pekerjaan</th>
+                <th class="px-4 py-3 text-right font-semibold text-gray-600 text-xs uppercase">Pendapatan</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 text-xs uppercase">Kelompok</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-200">
+                @foreach($session->results->sortBy('label') as $r)
+                <tr class="hover:bg-emerald-50/50 transition-colors">
+                    <td class="px-4 py-3 text-gray-500">{{ $loop->iteration }}</td>
+                    <td class="px-4 py-3 font-medium text-gray-900">{{ $r->warga->nama_lengkap ?? '-' }}</td>
+                    <td class="px-4 py-3 text-gray-600">{{ $r->warga->pekerjaan->nama ?? '-' }}</td>
+                    <td class="px-4 py-3 text-right text-gray-600">Rp {{ number_format($r->warga->pendapatan ?? 0, 0, ',', '.') }}</td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($r->label) { 'Rendah' => 'bg-rose-100 text-rose-700', 'Sedang' => 'bg-amber-100 text-amber-700', 'Tinggi' => 'bg-teal-100 text-teal-700', default => 'bg-gray-100 text-gray-700' } }}">
+                            {{ match($r->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $r->label } }}
+                        </span>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

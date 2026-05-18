@@ -2,13 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\CustomDashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -16,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -28,19 +30,24 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
-                'danger' => Color::Red,
+                'primary' => Color::Emerald,
+                'danger' => Color::Rose,
                 'warning' => Color::Amber,
-                'success' => Color::Emerald,
+                'success' => Color::Teal,
             ])
+            ->font('Inter')
             ->brandName('Pengelompokan Warga')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([Dashboard::class])
+            ->pages([CustomDashboard::class])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([AccountWidget::class])
             ->navigationGroups(['Data Warga', 'Master Data', 'Clustering'])
             ->sidebarCollapsibleOnDesktop()
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): string => Blade::render('<link rel="stylesheet" href="{{ asset("css/filament-emerald-theme.css") }}">')
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
