@@ -58,7 +58,7 @@
                 <tr><td class="text-center">2</td><td>Jumlah Tanggungan</td><td>Jumlah anggota keluarga yang ditanggung</td></tr>
                 <tr><td class="text-center">3</td><td>Pendidikan Kepala Keluarga</td><td>Skor tingkat pendidikan kepala keluarga (semakin tinggi, semakin baik)</td></tr>
                 <tr><td class="text-center">4</td><td>Kondisi Rumah</td><td>Skor kelayakan kondisi rumah (1=Menumpang, 3=Milik Sendiri)</td></tr>
-                <tr><td class="text-center">5</td><td>Penerima Bansos</td><td>Jumlah jenis bansos yang diterima (PKH, BLT, BPNT, dll)</td></tr>
+                <tr><td class="text-center">5</td><td>Bansos</td><td>Skor jenis bansos yang diterima (3=Tidak Menerima, 2=Sembako, 1=PKH/BLT)</td></tr>
             </tbody>
         </table>
     </div>
@@ -111,7 +111,7 @@
                     <td class="text-right">Rp {{ number_format($r->warga->pendapatan, 0, ',', '.') }}</td>
                     <td class="text-center">{{ $r->warga->jumlah_tanggungan }}</td>
                     <td>{{ $r->warga->kondisiRumah->nama ?? '-' }}</td>
-                    <td>{{ $r->warga->bansos->pluck('nama')->join(', ') ?: '-' }}</td>
+                    <td>{{ $r->warga->bansos->nama ?? '-' }}</td>
                 </tr>
                 @endforeach
                 </tbody>

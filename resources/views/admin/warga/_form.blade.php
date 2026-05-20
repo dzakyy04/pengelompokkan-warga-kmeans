@@ -77,19 +77,19 @@
         @error('kondisi_rumah_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
     <div>
-        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bansos yang Diterima <span class="text-gray-400 text-xs">(PKH, BLT, BPNT, dll)</span></label>
-        @php $selectedBansos = old('bansos', $w ? $w->bansos->pluck('id')->toArray() : []); @endphp
-        @if($bansos->isEmpty())
-        <p class="text-sm text-gray-400 italic">Belum ada data master bansos. Silakan tambahkan terlebih dahulu di menu Master Data &raquo; Bansos.</p>
-        @else
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-            @foreach($bansos as $b)
-            <label class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 dark:bg-slate-900 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition cursor-pointer border border-gray-200 dark:border-slate-700">
-                <input type="checkbox" name="bansos[]" value="{{ $b->id }}" {{ in_array($b->id, $selectedBansos) ? 'checked' : '' }} class="rounded text-emerald-600 focus:ring-emerald-500">
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $b->nama }}</span>
-            </label>
-            @endforeach
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bansos yang Diterima <span class="text-red-500">*</span></label>
+        <div class="relative w-full md:w-1/2">
+            <select name="bansos_id" required class="appearance-none w-full pl-4 pr-9 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Pilih Status Bansos</option>
+                @foreach($bansos as $b)
+                <option value="{{ $b->id }}" {{ old('bansos_id', $w->bansos_id ?? '') == $b->id ? 'selected' : '' }}>{{ $b->nama }}</option>
+                @endforeach
+            </select>
+            <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </span>
         </div>
-        @endif
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Pilih satu jenis bansos yang diterima. Pilih "Tidak Menerima" jika warga tidak menerima bansos apa pun.</p>
+        @error('bansos_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
 </div>

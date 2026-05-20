@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->decimal('pendapatan', 15, 0)->default(0);
             $table->integer('jumlah_tanggungan')->default(0);
             $table->foreignId('kondisi_rumah_id')->constrained('master_kondisi_rumah')->onDelete('restrict');
+            $table->foreignId('bansos_id')->constrained('master_bansos')->onDelete('restrict');
             $table->timestamps();
         });
     }

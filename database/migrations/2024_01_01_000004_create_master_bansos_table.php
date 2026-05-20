@@ -8,7 +8,7 @@ return new class extends Migration {
         Schema::create('master_bansos', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('keterangan')->nullable();
+            $table->integer('skor')->comment('3=Tidak Menerima, 2=Sembako, 1=PKH/BLT (semakin tinggi = semakin sejahtera)');
             $table->timestamps();
         });
     }

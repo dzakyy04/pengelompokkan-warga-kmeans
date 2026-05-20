@@ -21,7 +21,7 @@ class KMeansService
         }
 
         // 1. Build raw feature matrix
-        // Fitur: pendapatan, tanggungan, pendidikan kepala keluarga (skor), kondisi rumah (skor), penerima bansos (jumlah jenis)
+        // Fitur: pendapatan, tanggungan, pendidikan kepala keluarga (skor), kondisi rumah (skor), bansos (skor)
         $rawSamples = [];
         $wargaList = [];
         foreach ($wargas as $warga) {
@@ -30,7 +30,7 @@ class KMeansService
                 (float) $warga->jumlah_tanggungan,
                 (float) ($warga->pendidikan->skor ?? 0),
                 (float) ($warga->kondisiRumah->skor ?? 0),
-                (float) $warga->bansos->count(),
+                (float) ($warga->bansos->skor ?? 0),
             ];
             $wargaList[] = $warga;
         }

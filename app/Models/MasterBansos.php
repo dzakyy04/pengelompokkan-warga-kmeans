@@ -1,11 +1,12 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MasterBansos extends Model
 {
     protected $table = 'master_bansos';
-    protected $fillable = ['nama', 'keterangan'];
-    public function wargas(): BelongsToMany { return $this->belongsToMany(Warga::class, 'warga_bansos', 'master_bansos_id', 'warga_id'); }
+    protected $fillable = ['nama', 'skor'];
+    protected $casts = ['skor' => 'integer'];
+    public function wargas(): HasMany { return $this->hasMany(Warga::class, 'bansos_id'); }
 }

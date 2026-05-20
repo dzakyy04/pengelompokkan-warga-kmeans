@@ -29,7 +29,7 @@ class WargaController extends Controller
 
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
-        $bansos = MasterBansos::orderBy('nama')->get();
+        $bansos = MasterBansos::orderBy('skor', 'desc')->get();
 
         return view('admin.warga.index', compact('wargas', 'pendidikans', 'kondisiRumahs', 'bansos'));
     }
@@ -38,7 +38,7 @@ class WargaController extends Controller
     {
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
-        $bansos = MasterBansos::orderBy('nama')->get();
+        $bansos = MasterBansos::orderBy('skor', 'desc')->get();
         return view('admin.warga.create', compact('pendidikans', 'kondisiRumahs', 'bansos'));
     }
 
@@ -54,27 +54,22 @@ class WargaController extends Controller
             'pendapatan' => 'required|numeric|min:0',
             'jumlah_tanggungan' => 'required|integer|min:0|max:20',
             'kondisi_rumah_id' => 'required|exists:master_kondisi_rumah,id',
-            'bansos' => 'nullable|array',
-            'bansos.*' => 'exists:master_bansos,id',
+            'bansos_id' => 'required|exists:master_bansos,id',
         ]);
 
-        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pendapatan', 'jumlah_tanggungan', 'kondisi_rumah_id');
+        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pendapatan', 'jumlah_tanggungan', 'kondisi_rumah_id', 'bansos_id');
         $data['pendapatan'] = (int) str_replace('.', '', $data['pendapatan']);
 
-        $warga = Warga::create($data);
-        if ($request->has('bansos')) {
-            $warga->bansos()->sync($request->bansos);
-        }
+        Warga::create($data);
 
         return redirect()->route('admin.warga.index')->with('success', 'Data warga berhasil ditambahkan.');
     }
 
     public function edit(Warga $warga)
     {
-        $warga->load('bansos');
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
-        $bansos = MasterBansos::orderBy('nama')->get();
+        $bansos = MasterBansos::orderBy('skor', 'desc')->get();
         return view('admin.warga.edit', compact('warga', 'pendidikans', 'kondisiRumahs', 'bansos'));
     }
 
@@ -90,22 +85,19 @@ class WargaController extends Controller
             'pendapatan' => 'required|numeric|min:0',
             'jumlah_tanggungan' => 'required|integer|min:0|max:20',
             'kondisi_rumah_id' => 'required|exists:master_kondisi_rumah,id',
-            'bansos' => 'nullable|array',
-            'bansos.*' => 'exists:master_bansos,id',
+            'bansos_id' => 'required|exists:master_bansos,id',
         ]);
 
-        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pendapatan', 'jumlah_tanggungan', 'kondisi_rumah_id');
+        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pendapatan', 'jumlah_tanggungan', 'kondisi_rumah_id', 'bansos_id');
         $data['pendapatan'] = (int) str_replace('.', '', $data['pendapatan']);
 
         $warga->update($data);
-        $warga->bansos()->sync($request->bansos ?? []);
 
         return redirect()->route('admin.warga.index')->with('success', 'Data warga berhasil diperbarui.');
     }
 
     public function destroy(Warga $warga)
     {
-        $warga->bansos()->detach();
         $warga->delete();
         return redirect()->route('admin.warga.index')->with('success', 'Data warga berhasil dihapus.');
     }

@@ -31,14 +31,11 @@ class MasterDataSeeder extends Seeder
             MasterKondisiRumah::firstOrCreate(['nama' => $data['nama']], $data);
         }
 
-        // Master Bansos (Bantuan Sosial)
+        // Master Bansos (skor: semakin tinggi = semakin sejahtera / tidak butuh bansos besar)
         foreach ([
-            ['nama' => 'PKH', 'keterangan' => 'Program Keluarga Harapan'],
-            ['nama' => 'BLT', 'keterangan' => 'Bantuan Langsung Tunai'],
-            ['nama' => 'BPNT / Sembako', 'keterangan' => 'Bantuan Pangan Non-Tunai'],
-            ['nama' => 'KIS', 'keterangan' => 'Kartu Indonesia Sehat'],
-            ['nama' => 'KIP', 'keterangan' => 'Kartu Indonesia Pintar'],
-            ['nama' => 'BSU', 'keterangan' => 'Bantuan Subsidi Upah'],
+            ['nama' => 'Tidak Menerima', 'skor' => 3],
+            ['nama' => 'Sembako', 'skor' => 2],
+            ['nama' => 'PKH atau BLT', 'skor' => 1],
         ] as $data) {
             MasterBansos::firstOrCreate(['nama' => $data['nama']], $data);
         }
