@@ -49,6 +49,39 @@
         </form>
     </div>
 
+    {{-- Base Model Info --}}
+    @php $activeBaseModel = \App\Models\ClusteringSession::getActiveBaseModel(); @endphp
+    @if($activeBaseModel)
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-indigo-200 dark:border-indigo-800/50 p-6 mb-6 transition-colors duration-200">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
+                <span class="text-lg">🎯</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-gray-900 dark:text-white">Base Model Aktif</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Session #{{ $activeBaseModel->id }} — {{ $activeBaseModel->created_at->format('d M Y, H:i') }}</p>
+            </div>
+        </div>
+        <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800/50 rounded-xl p-4">
+            <p class="text-sm text-indigo-700 dark:text-indigo-300">
+                Warga baru yang ditambahkan akan <strong>otomatis terkelompokkan</strong> menggunakan model ini dan menunggu validasi Kepala Desa.
+            </p>
+        </div>
+        @php $pendingCount = \App\Models\WargaClassificationQueue::where('status', 'pending')->count(); @endphp
+        @if($pendingCount > 0)
+        <a href="{{ route('admin.clustering.pending-classifications') }}" class="inline-flex items-center mt-3 text-sm text-indigo-600 hover:text-indigo-700 font-semibold">
+            {{ $pendingCount }} warga baru menunggu validasi &rarr;
+        </a>
+        @endif
+    </div>
+    @else
+    <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-4 mb-6">
+        <p class="text-sm text-amber-700 dark:text-amber-300">
+            <strong>Belum ada Base Model aktif.</strong> Lakukan proses pengelompokan, validasi hasilnya, lalu aktifkan sebagai Base Model agar warga baru otomatis terkelompokkan.
+        </p>
+    </div>
+    @endif
+
     @if($latestSession)
     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
         <h3 class="font-bold text-gray-900 dark:text-white mb-3">Pengelompokan Terakhir</h3>

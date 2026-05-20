@@ -59,6 +59,30 @@
     </div>
 </div>
 
+{{-- Pending Classification Alert (for Kades) --}}
+@if(auth()->user()->isKepalaDesa())
+@php $pendingClassifications = \App\Models\WargaClassificationQueue::where('status', 'pending')->count(); @endphp
+@if($pendingClassifications > 0)
+<div class="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl shadow-lg p-5 mb-6 text-white relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+    <div class="relative z-10 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">{{ $pendingClassifications }} Warga Baru Menunggu Validasi</h3>
+                <p class="text-sm text-indigo-100">Warga baru telah otomatis terkelompokkan dan membutuhkan persetujuan Anda.</p>
+            </div>
+        </div>
+        <a href="{{ route('admin.clustering.pending-classifications') }}" class="px-5 py-2.5 bg-white text-indigo-600 font-semibold text-sm rounded-xl hover:bg-indigo-50 transition flex-shrink-0">
+            Validasi Sekarang
+        </a>
+    </div>
+</div>
+@endif
+@endif
+
 {{-- Charts --}}
 <div class="grid grid-cols-12 gap-4 mb-6">
     <div class="col-span-12 lg:col-span-4">

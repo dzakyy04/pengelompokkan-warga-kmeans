@@ -6,6 +6,7 @@ use App\Models\ClusterCentroid;
 use App\Models\ClusteringResult;
 use App\Models\ClusteringSession;
 use App\Models\Warga;
+use App\Models\WargaClassificationQueue;
 use Phpml\Clustering\KMeans;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,11 @@ class KMeansService
             $col = array_column($rawSamples, $i);
             $mins[$i] = min($col);
             $maxs[$i] = max($col);
+        }
+
+        $normalizationParams = [];
+        for ($i = 0; $i < $numFeatures; $i++) {
+            $normalizationParams[$i] = ['min' => $mins[$i], 'max' => $maxs[$i]];
         }
 
         $normalized = [];
@@ -111,12 +117,13 @@ class KMeansService
         }
 
         // 6. Save to database
-        return DB::transaction(function () use ($wargaClusterMap, $clusterCentroidData, $grouped, $labelMap, $numClusters, $maxIterations) {
+        return DB::transaction(function () use ($wargaClusterMap, $clusterCentroidData, $grouped, $labelMap, $numClusters, $maxIterations, $normalizationParams) {
             $session = ClusteringSession::create([
                 'user_id' => Auth::id(),
                 'jumlah_cluster' => $numClusters,
                 'max_iterasi' => $maxIterations,
                 'status' => 'completed',
+                'normalization_params' => $normalizationParams,
             ]);
 
             foreach ($wargaClusterMap as $item) {
@@ -173,5 +180,76 @@ class KMeansService
             $sum += ($a[$i] - $b[$i]) ** 2;
         }
         return sqrt($sum);
+    }
+
+    public function classifyNewWarga(Warga $warga): WargaClassificationQueue
+    {
+        $baseModel = ClusteringSession::getActiveBaseModel();
+        if (!$baseModel) {
+            throw new \Exception('Tidak ada base model aktif. Silakan lakukan training K-Means terlebih dahulu dan aktifkan sebagai base model.');
+        }
+
+        $warga->load(['pendidikan', 'kondisiRumah', 'bansos']);
+        $rawFeatures = [
+            (float) $warga->pendapatan,
+            (float) $warga->jumlah_tanggungan,
+            (float) ($warga->pendidikan->skor ?? 0),
+            (float) ($warga->kondisiRumah->skor ?? 0),
+            (float) ($warga->bansos->skor ?? 0),
+        ];
+
+        $params = $baseModel->normalization_params;
+        $normalized = [];
+        for ($i = 0; $i < count($rawFeatures); $i++) {
+            $min = $params[$i]['min'];
+            $max = $params[$i]['max'];
+            $range = $max - $min;
+            $normalized[] = $range > 0 ? ($rawFeatures[$i] - $min) / $range : 0.0;
+        }
+
+        $centroids = $baseModel->centroids()->orderBy('cluster')->get();
+        $distances = [];
+        foreach ($centroids as $centroid) {
+            $centroidValues = [
+                (float) $centroid->centroid_pendapatan,
+                (float) $centroid->centroid_tanggungan,
+                (float) $centroid->centroid_pendidikan,
+                (float) $centroid->centroid_kondisi_rumah,
+                (float) $centroid->centroid_bansos,
+            ];
+            $distances[$centroid->cluster] = [
+                'distance' => $this->euclideanDistance($normalized, $centroidValues),
+                'label' => $centroid->label,
+            ];
+        }
+
+        $nearestCluster = collect($distances)->sortBy('distance')->keys()->first();
+        $nearest = $distances[$nearestCluster];
+
+        return WargaClassificationQueue::create([
+            'warga_id' => $warga->id,
+            'base_model_session_id' => $baseModel->id,
+            'assigned_cluster' => $nearestCluster,
+            'assigned_label' => $nearest['label'],
+            'distance_to_centroid' => $nearest['distance'],
+            'distances_to_all_centroids' => $distances,
+            'feature_values' => $normalized,
+            'status' => 'pending',
+        ]);
+    }
+
+    public function activateAsBaseModel(ClusteringSession $session): void
+    {
+        if ($session->status !== 'validated') {
+            throw new \Exception('Hanya session yang sudah divalidasi yang bisa dijadikan base model.');
+        }
+        if (!$session->normalization_params) {
+            throw new \Exception('Session ini tidak memiliki parameter normalisasi. Silakan lakukan training ulang.');
+        }
+
+        DB::transaction(function () use ($session) {
+            ClusteringSession::where('is_base_model', true)->update(['is_base_model' => false]);
+            $session->update(['is_base_model' => true]);
+        });
     }
 }

@@ -14,4 +14,6 @@ class Warga extends Model
     public function bansos(): BelongsTo { return $this->belongsTo(MasterBansos::class, 'bansos_id'); }
     public function clusteringResults(): HasMany { return $this->hasMany(ClusteringResult::class); }
     public function latestClusteringResult() { return $this->hasOne(ClusteringResult::class)->latestOfMany(); }
+    public function classificationQueue(): HasMany { return $this->hasMany(WargaClassificationQueue::class); }
+    public function latestClassification() { return $this->hasOne(WargaClassificationQueue::class)->latestOfMany(); }
 }

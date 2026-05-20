@@ -8,10 +8,20 @@
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Data Warga</h1>
         <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Kelola data warga untuk proses pengelompokan</p>
     </div>
-    <button type="button" onclick="openModal('createWargaModal')" class="w-full md:w-auto justify-center inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        Tambah Warga
-    </button>
+    <div class="flex items-center gap-2 flex-wrap">
+        <a href="{{ route('admin.warga.export-pdf', request()->query()) }}" class="inline-flex items-center px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            PDF
+        </a>
+        <a href="{{ route('admin.warga.export-excel', request()->query()) }}" class="inline-flex items-center px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Excel
+        </a>
+        <button type="button" onclick="openModal('createWargaModal')" class="inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Tambah Warga
+        </button>
+    </div>
 </div>
 
 {{-- Filter --}}
@@ -67,6 +77,21 @@
                     <td class="px-4 py-3 text-center">
                         @if($w->latestClusteringResult)
                         <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($w->latestClusteringResult->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($w->latestClusteringResult->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $w->latestClusteringResult->label } }}</span>
+                        @elseif($w->latestClassification)
+                        @php $cls = $w->latestClassification; @endphp
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($cls->assigned_label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($cls->assigned_label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $cls->assigned_label } }}</span>
+                            <span class="inline-flex items-center gap-1 text-[10px] {{ $cls->status === 'pending' ? 'text-amber-500' : ($cls->status === 'approved' ? 'text-emerald-500' : 'text-red-500') }}">
+                                @if($cls->status === 'pending')
+                                <svg class="w-3 h-3 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5"/></svg>
+                                Menunggu validasi
+                                @elseif($cls->status === 'approved')
+                                ✓ Disetujui
+                                @else
+                                ✗ Ditolak
+                                @endif
+                            </span>
+                        </div>
                         @else
                         <span class="text-gray-400 dark:text-gray-500 text-xs">-</span>
                         @endif
