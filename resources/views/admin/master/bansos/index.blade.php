@@ -9,7 +9,7 @@
     </button>
 </div>
 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200">
-    <table class="w-full text-sm">
+    <table id="bansosTable" class="w-full text-sm">
         <thead class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700"><tr>
             <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase w-16">No</th>
             <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Nama Bansos</th>
@@ -20,7 +20,7 @@
         <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
             @forelse($items as $item)
             <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $loop->iteration + ($items->currentPage()-1) * $items->perPage() }}</td>
+                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $loop->iteration }}</td>
                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $item->nama }}</td>
                 <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded-lg text-xs font-semibold {{ match(true) { $item->skor >= 3 => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', $item->skor >= 2 => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', default => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' } }}">{{ $item->skor }}</span></td>
                 <td class="px-4 py-3 text-center"><span class="px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-semibold">{{ $item->wargas_count }}</span></td>
@@ -32,7 +32,6 @@
             @empty<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada data.</td></tr>@endforelse
         </tbody>
     </table>
-    @if($items->hasPages())<div class="px-4 py-3 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800">{{ $items->links() }}</div>@endif
 </div>
 
 {{-- Modal --}}
@@ -100,4 +99,26 @@ function openModal(mode, id, nama, skor) {
 function closeModal() { document.getElementById('modal').classList.add('hidden'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#bansosTable').DataTable({
+        language: {
+            search: "Cari:",
+            lengthMenu: "Tampilkan _MENU_ data",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            infoEmpty: "Tidak ada data",
+            infoFiltered: "(disaring dari _MAX_ total data)",
+            zeroRecords: "Tidak ada data yang cocok",
+            paginate: { first: "«", last: "»", next: "›", previous: "‹" }
+        },
+        pageLength: 10,
+        order: [[2, 'asc']],
+        columnDefs: [
+            { orderable: false, targets: [4] }
+        ]
+    });
+});
+</script>
+@endpush
 @endsection

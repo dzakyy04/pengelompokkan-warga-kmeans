@@ -38,7 +38,7 @@ class ClusteringController extends Controller
 
     public function history()
     {
-        $sessions = ClusteringSession::with('user')->withCount('results')->latest()->paginate(10);
+        $sessions = ClusteringSession::with('user')->withCount('results')->latest()->get();
         return view('admin.clustering.history', compact('sessions'));
     }
 
@@ -82,7 +82,12 @@ class ClusteringController extends Controller
     public function downloadPdf($id)
     {
         $session = ClusteringSession::with(['results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos', 'centroids', 'user', 'validatedByUser'])->findOrFail($id);
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.laporan-clustering', ['session' => $session]);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.laporan-clustering', ['session' => $session])
+            ->setPaper('a4', 'portrait')
+            ->setOption('margin-top', 20)
+            ->setOption('margin-bottom', 20)
+            ->setOption('margin-left', 20)
+            ->setOption('margin-right', 20);
         return response()->streamDownload(fn() => print($pdf->output()), "laporan-clustering-{$session->id}.pdf");
     }
 
@@ -103,7 +108,7 @@ class ClusteringController extends Controller
         $pending = WargaClassificationQueue::with(['warga.pendidikan', 'warga.kondisiRumah', 'warga.bansos', 'baseModelSession'])
             ->where('status', 'pending')
             ->latest()
-            ->paginate(15);
+            ->get();
 
         $totalPending = WargaClassificationQueue::where('status', 'pending')->count();
         $totalApproved = WargaClassificationQueue::where('status', 'approved')->count();

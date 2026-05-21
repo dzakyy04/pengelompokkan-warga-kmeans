@@ -20,17 +20,39 @@ class WargaController extends Controller
     {
         $query = Warga::with(['pendidikan', 'kondisiRumah', 'bansos', 'latestClusteringResult', 'latestClassification']);
 
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%")->orWhere('nik', 'like', "%{$s}%"));
-        }
         if ($request->filled('kelompok')) {
             $query->whereHas('latestClusteringResult', function($q) use ($request) {
                 $q->where('label', $request->kelompok);
             });
         }
+        if ($request->filled('pendidikan_id')) {
+            $query->where('pendidikan_id', $request->pendidikan_id);
+        }
+        if ($request->filled('kondisi_rumah_id')) {
+            $query->where('kondisi_rumah_id', $request->kondisi_rumah_id);
+        }
+        if ($request->filled('bansos_id')) {
+            $query->where('bansos_id', $request->bansos_id);
+        }
+        if ($request->filled('pendapatan_min')) {
+            $query->where('pendapatan', '>=', str_replace('.', '', $request->pendapatan_min));
+        }
+        if ($request->filled('pendapatan_max')) {
+            $query->where('pendapatan', '<=', str_replace('.', '', $request->pendapatan_max));
+        }
+        if ($request->filled('tanggungan_min')) {
+            $query->where('jumlah_tanggungan', '>=', $request->tanggungan_min);
+        }
+        if ($request->filled('tanggungan_max')) {
+            $query->where('jumlah_tanggungan', '<=', $request->tanggungan_max);
+        }
+        if ($request->filled('status_validasi')) {
+            $query->whereHas('latestClassification', function($q) use ($request) {
+                $q->where('status', $request->status_validasi);
+            });
+        }
 
-        $wargas = $query->orderBy('nama_lengkap')->paginate(15)->withQueryString();
+        $wargas = $query->orderBy('nama_lengkap')->get();
 
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
@@ -165,6 +187,27 @@ class WargaController extends Controller
                 $q->where('label', $request->kelompok);
             });
         }
+        if ($request->filled('pendidikan_id')) {
+            $query->where('pendidikan_id', $request->pendidikan_id);
+        }
+        if ($request->filled('kondisi_rumah_id')) {
+            $query->where('kondisi_rumah_id', $request->kondisi_rumah_id);
+        }
+        if ($request->filled('bansos_id')) {
+            $query->where('bansos_id', $request->bansos_id);
+        }
+        if ($request->filled('tanggungan_min')) {
+            $query->where('jumlah_tanggungan', '>=', $request->tanggungan_min);
+        }
+        if ($request->filled('tanggungan_max')) {
+            $query->where('jumlah_tanggungan', '<=', $request->tanggungan_max);
+        }
+        if ($request->filled('pendapatan_min')) {
+            $query->where('pendapatan', '>=', str_replace('.', '', $request->pendapatan_min));
+        }
+        if ($request->filled('pendapatan_max')) {
+            $query->where('pendapatan', '<=', str_replace('.', '', $request->pendapatan_max));
+        }
 
         return $query->orderBy('nama_lengkap')->get();
     }
@@ -176,7 +219,11 @@ class WargaController extends Controller
         $kelompok = $request->kelompok;
 
         $pdf = Pdf::loadView('pdf.laporan-warga', compact('wargas', 'search', 'kelompok'))
-            ->setPaper('a4', 'landscape');
+            ->setPaper('a4', 'landscape')
+            ->setOption('margin-top', 20)
+            ->setOption('margin-bottom', 20)
+            ->setOption('margin-left', 20)
+            ->setOption('margin-right', 20);
 
         return response()->streamDownload(
             fn() => print($pdf->output()),

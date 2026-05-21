@@ -9,7 +9,7 @@
 </div>
 
 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200">
-    <table class="w-full text-sm">
+    <table id="historyTable" class="w-full text-sm">
         <thead class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700">
             <tr>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">No</th>
@@ -24,7 +24,7 @@
         <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
             @forelse($sessions as $s)
             <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                <td class="px-4 py-3 font-bold text-gray-900 dark:text-white">{{ $loop->iteration + ($sessions->currentPage()-1) * $sessions->perPage() }}</td>
+                <td class="px-4 py-3 font-bold text-gray-900 dark:text-white">{{ $loop->iteration }}</td>
                 <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $s->user->name ?? '-' }}</td>
                 <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{{ $s->jumlah_cluster }}</td>
                 <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{{ $s->results_count }}</td>
@@ -43,8 +43,28 @@
             @endforelse
         </tbody>
     </table>
-    @if($sessions->hasPages())
-    <div class="px-4 py-3 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800">{{ $sessions->links() }}</div>
-    @endif
 </div>
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#historyTable').DataTable({
+        language: {
+            search: "Cari: ",
+            lengthMenu: "Tampilkan _MENU_ data",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            infoEmpty: "Tidak ada data",
+            infoFiltered: "(disaring dari _MAX_ total data)",
+            zeroRecords: "Tidak ada data yang cocok",
+            paginate: { first: "«", last: "»", next: "›", previous: "‹" }
+        },
+        pageLength: 10,
+        order: [[5, 'desc']],
+        columnDefs: [
+            { orderable: false, targets: [6] }
+        ]
+    });
+});
+</script>
+@endpush
 @endsection

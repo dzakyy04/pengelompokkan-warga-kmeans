@@ -6,6 +6,114 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin') — Pengelompokan Warga</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- DataTables --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.tailwindcss.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <style>
+        /* DataTables custom styling */
+        .dataTables_wrapper .dataTables_length select,
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .dark .dataTables_wrapper .dataTables_length select,
+        .dark .dataTables_wrapper .dataTables_filter input {
+            background-color: #0f172a;
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+        .dataTables_wrapper .dataTables_length select:focus,
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+        .dataTables_wrapper .dataTables_filter label,
+        .dataTables_wrapper .dataTables_length label,
+        .dataTables_wrapper .dataTables_info {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .dark .dataTables_wrapper .dataTables_filter label,
+        .dark .dataTables_wrapper .dataTables_length label,
+        .dark .dataTables_wrapper .dataTables_info {
+            color: #9ca3af;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.4rem 0.8rem;
+            margin: 0 0.15rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid #e5e7eb !important;
+            background: white !important;
+            color: #374151 !important;
+        }
+        .dark .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border-color: #475569 !important;
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #10b981 !important;
+            border-color: #10b981 !important;
+            color: white !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+            background: #f0fdf4 !important;
+            border-color: #10b981 !important;
+            color: #10b981 !important;
+        }
+        .dark .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+            background: #064e3b !important;
+            color: #6ee7b7 !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        /* Layout: length di kiri, filter/search di kanan */
+        .dataTables_wrapper .dataTables_length {
+            float: left;
+            padding: 1rem 1.5rem;
+        }
+        .dataTables_wrapper .dataTables_filter {
+            float: right;
+            padding: 1rem 1.5rem;
+        }
+        .dataTables_wrapper .dataTables_info {
+            float: left;
+            padding: 1rem 1.5rem;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            float: right;
+            padding: 1rem 1.5rem;
+        }
+        .dataTables_wrapper::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        table.dataTable thead th {
+            border-bottom: none !important;
+        }
+        table.dataTable.no-footer {
+            border-bottom: none !important;
+        }
+        /* Prevent DataTables from overflowing the container */
+        .dataTables_wrapper {
+            overflow: hidden;
+            width: 100% !important;
+        }
+        div.dataTables_scrollBody {
+            overflow-x: auto !important;
+        }
+    </style>
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -19,7 +127,7 @@
     <div class="flex h-screen overflow-hidden">
         @include('admin.partials.sidebar')
 
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden min-w-0">
             @include('admin.partials.header')
 
             <main class="flex-1 overflow-y-auto flex flex-col">

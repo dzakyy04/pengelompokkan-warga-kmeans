@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\MasterPendidikanController;
 use App\Http\Controllers\Admin\WargaController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn() => redirect()->route('admin.login'));
+Route::get('/', fn() => view('home'))->name('home');
 
 // Auth
 Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');

@@ -10,7 +10,7 @@ class MasterBansosController extends Controller
 {
     public function index()
     {
-        $items = MasterBansos::withCount('wargas')->orderBy('skor', 'desc')->paginate(15);
+        $items = MasterBansos::withCount('wargas')->orderBy('skor')->get();
         return view('admin.master.bansos.index', compact('items'));
     }
 

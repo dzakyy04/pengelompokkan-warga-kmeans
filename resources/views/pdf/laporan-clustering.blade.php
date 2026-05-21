@@ -2,76 +2,337 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Laporan Hasil Clustering</title>
+    <title>Laporan Hasil Pengelompokan Warga</title>
     <style>
+        @page {
+            margin: 0;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #333; line-height: 1.5; }
-        .header { text-align: center; border-bottom: 3px double #333; padding-bottom: 15px; margin-bottom: 20px; }
-        .header h1 { font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .header h2 { font-size: 13px; font-weight: normal; margin-top: 5px; }
-        .header .date { font-size: 10px; color: #666; margin-top: 5px; }
-        .section { margin-bottom: 20px; }
-        .section-title { font-size: 13px; font-weight: bold; background: #2563eb; color: white; padding: 6px 12px; margin-bottom: 10px; border-radius: 3px; }
-        .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .summary-table th, .summary-table td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; }
-        .summary-table th { background: #f3f4f6; font-weight: bold; font-size: 10px; text-transform: uppercase; }
-        .cluster-rendah { border-left: 4px solid #ef4444; }
-        .cluster-sedang { border-left: 4px solid #f59e0b; }
-        .cluster-tinggi { border-left: 4px solid #22c55e; }
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
-        .badge-rendah { background: #fef2f2; color: #dc2626; }
-        .badge-sedang { background: #fffbeb; color: #d97706; }
-        .badge-tinggi { background: #f0fdf4; color: #16a34a; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .rekomendasi { background: #f0f9ff; border: 1px solid #bae6fd; padding: 8px 12px; border-radius: 4px; margin-bottom: 10px; font-size: 10px; }
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 10px;
+            color: #1a1a1a;
+            line-height: 1.6;
+            padding: 60px 50px 50px 50px;
+        }
+
+        /* Kop Surat */
+        .kop-surat {
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 4px solid #1a1a1a;
+            margin-bottom: 6px;
+        }
+        .kop-surat .nama-instansi {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .kop-surat .alamat {
+            font-size: 9px;
+            color: #555;
+            margin-top: 2px;
+        }
+        .kop-border-double {
+            border-bottom: 1.5px solid #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        /* Judul Dokumen */
+        .judul-dokumen {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+        }
+        .judul-dokumen h1 {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: underline;
+            margin-bottom: 4px;
+        }
+        .judul-dokumen .nomor {
+            font-size: 10px;
+            color: #444;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 22px;
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+            border-bottom: 1.5px solid #1a1a1a;
+        }
+
+        /* Info Table (key-value) */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .info-table td {
+            padding: 5px 8px;
+            border: 1px solid #555;
+            font-size: 10px;
+            vertical-align: top;
+        }
+        .info-table .label {
+            font-weight: bold;
+            background: #f0f0f0;
+            width: 170px;
+            color: #1a1a1a;
+        }
+
+        /* Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 9px;
+        }
+        .data-table th,
+        .data-table td {
+            border: 1px solid #555;
+            padding: 5px 7px;
+            text-align: left;
+        }
+        .data-table th {
+            background: #2d2d2d;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 8px;
+            text-transform: uppercase;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+        .data-table tbody tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+
+        /* Cluster border */
+        .cluster-rendah { border-left: 4px solid #dc2626; }
+        .cluster-sedang { border-left: 4px solid #d97706; }
+        .cluster-tinggi { border-left: 4px solid #16a34a; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 7px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .badge-rendah { background: #fecaca; color: #991b1b; }
+        .badge-sedang { background: #fde68a; color: #92400e; }
+        .badge-tinggi { background: #bbf7d0; color: #166534; }
+
+        .text-right { text-align: right !important; }
+        .text-center { text-align: center !important; }
+
+        /* Rekomendasi */
+        .rekomendasi {
+            border: 1px solid #999;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            font-size: 9px;
+            color: #333;
+            background: #fafafa;
+        }
+        .rekomendasi strong {
+            display: block;
+            margin-bottom: 2px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #1a1a1a;
+        }
+
+        /* Page break */
         .page-break { page-break-before: always; }
-        .footer { margin-top: 30px; text-align: center; font-size: 9px; color: #999; border-top: 1px solid #ddd; padding-top: 10px; }
-        .signature-area { margin-top: 40px; }
-        .signature-area table { width: 100%; }
-        .signature-box { text-align: center; padding: 20px; }
-        .signature-box .title { font-size: 10px; font-weight: bold; margin-bottom: 60px; }
-        .signature-box .name { font-size: 11px; font-weight: bold; border-top: 1px solid #333; display: inline-block; padding-top: 5px; }
+
+        /* Tanda Tangan */
+        .signature-area {
+            margin-top: 50px;
+            page-break-inside: avoid;
+        }
+        .signature-area table {
+            width: 100%;
+        }
+        .signature-box {
+            text-align: center;
+            padding: 10px 15px;
+            vertical-align: top;
+        }
+        .signature-box .tempat-tanggal {
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+        .signature-box .jabatan {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 65px;
+        }
+        .signature-box .nama {
+            font-size: 10px;
+            font-weight: bold;
+            border-bottom: 1px solid #1a1a1a;
+            display: inline-block;
+            padding-bottom: 3px;
+            min-width: 150px;
+        }
+        .signature-box .nip {
+            font-size: 9px;
+            color: #555;
+            margin-top: 3px;
+        }
+
+        /* Status */
+        .status-validated {
+            font-weight: bold;
+            color: #166534;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 8px;
+            color: #999;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        /* Catatan */
+        .catatan {
+            font-size: 8px;
+            color: #666;
+            margin-top: 4px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
+    {{-- Kop Surat --}}
+    <div class="kop-surat">
+        <div class="nama-instansi">Pemerintah Desa</div>
+        <div class="alamat">Alamat: Jl. Desa No. 01 — Telp: (021) 000-0000</div>
+    </div>
+    <div class="kop-border-double"></div>
+
+    {{-- Judul Dokumen --}}
+    <div class="judul-dokumen">
         <h1>Laporan Hasil Pengelompokan Warga</h1>
-        <h2>Metode K-Means Clustering</h2>
-        <div class="date">Dicetak pada: {{ now()->format('d F Y, H:i') }} WIB</div>
+        <div class="nomor">Nomor: LC/{{ str_pad($session->id, 3, '0', STR_PAD_LEFT) }}/{{ $session->created_at->format('m/Y') }}</div>
     </div>
 
+    {{-- I. Informasi Umum --}}
     <div class="section">
-        <div class="section-title">Ringkasan</div>
-        <table class="summary-table">
-            <tr><td><strong>Total Warga</strong></td><td>{{ $session->results->count() }}</td><td><strong>Jumlah Cluster</strong></td><td>{{ $session->jumlah_cluster }}</td></tr>
-            <tr><td><strong>Tanggal Proses</strong></td><td>{{ $session->created_at->format('d M Y H:i') }}</td><td><strong>Status</strong></td><td style="color:#16a34a;font-weight:bold">Validated</td></tr>
+        <div class="section-title">I. Informasi Umum</div>
+        <table class="info-table">
+            <tr>
+                <td class="label">Metode</td>
+                <td>K-Means Clustering</td>
+                <td class="label">Jumlah Cluster</td>
+                <td>{{ $session->jumlah_cluster }} Kelompok</td>
+            </tr>
+            <tr>
+                <td class="label">Tanggal Proses</td>
+                <td>{{ $session->created_at->translatedFormat('d F Y, H:i') }} WIB</td>
+                <td class="label">Total Warga Diproses</td>
+                <td>{{ $session->results->count() }} orang</td>
+            </tr>
+            <tr>
+                <td class="label">Diproses Oleh</td>
+                <td>{{ $session->user->name ?? '-' }}</td>
+                <td class="label">Status</td>
+                <td class="status-validated">Divalidasi / Disetujui</td>
+            </tr>
+            <tr>
+                <td class="label">Divalidasi Oleh</td>
+                <td>{{ $session->validatedByUser->name ?? '-' }}</td>
+                <td class="label">Tanggal Validasi</td>
+                <td>{{ $session->validated_at ? \Carbon\Carbon::parse($session->validated_at)->translatedFormat('d F Y, H:i') . ' WIB' : '-' }}</td>
+            </tr>
         </table>
     </div>
 
+    {{-- II. Parameter --}}
     <div class="section">
-        <div class="section-title">Fitur K-Means yang Digunakan</div>
-        <table class="summary-table">
-            <thead><tr><th>No</th><th>Fitur</th><th>Keterangan</th></tr></thead>
+        <div class="section-title">II. Parameter / Fitur yang Digunakan</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:25px;">No</th>
+                    <th>Fitur</th>
+                    <th>Keterangan</th>
+                    <th>Skala</th>
+                </tr>
+            </thead>
             <tbody>
-                <tr><td class="text-center">1</td><td>Pendapatan</td><td>Pendapatan rata-rata per bulan (Rupiah)</td></tr>
-                <tr><td class="text-center">2</td><td>Jumlah Tanggungan</td><td>Jumlah anggota keluarga yang ditanggung</td></tr>
-                <tr><td class="text-center">3</td><td>Pendidikan Kepala Keluarga</td><td>Skor tingkat pendidikan kepala keluarga (semakin tinggi, semakin baik)</td></tr>
-                <tr><td class="text-center">4</td><td>Kondisi Rumah</td><td>Skor kelayakan kondisi rumah (1=Menumpang, 3=Milik Sendiri)</td></tr>
-                <tr><td class="text-center">5</td><td>Bansos</td><td>Skor jenis bansos yang diterima (3=Tidak Menerima, 2=Sembako, 1=PKH/BLT)</td></tr>
+                <tr>
+                    <td class="text-center">1</td>
+                    <td>Pendapatan</td>
+                    <td>Pendapatan rata-rata per bulan</td>
+                    <td>Rupiah (dinormalisasi 0–1)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">2</td>
+                    <td>Jumlah Tanggungan</td>
+                    <td>Jumlah anggota keluarga yang ditanggung</td>
+                    <td>Numerik (dinormalisasi 0–1)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">3</td>
+                    <td>Pendidikan Kepala Keluarga</td>
+                    <td>Tingkat pendidikan terakhir kepala keluarga</td>
+                    <td>Skor ordinal (dinormalisasi 0–1)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">4</td>
+                    <td>Kondisi Rumah</td>
+                    <td>Status kepemilikan dan kelayakan rumah</td>
+                    <td>Skor ordinal (dinormalisasi 0–1)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">5</td>
+                    <td>Bantuan Sosial (Bansos)</td>
+                    <td>Jenis bantuan sosial yang diterima</td>
+                    <td>Skor ordinal (dinormalisasi 0–1)</td>
+                </tr>
             </tbody>
         </table>
+        <div class="catatan">* Seluruh fitur dinormalisasi menggunakan metode Min-Max Normalization (skala 0–1) sebelum proses clustering.</div>
     </div>
 
+    {{-- III. Centroid --}}
     <div class="section">
-        <div class="section-title">Nilai Centroid per Cluster</div>
-        <table class="summary-table">
-            <thead><tr><th>Cluster</th><th>Anggota</th><th>Pendapatan</th><th>Tanggungan</th><th>Pendidikan</th><th>Kondisi Rumah</th><th>Bansos</th></tr></thead>
+        <div class="section-title">III. Nilai Centroid Akhir per Cluster</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Cluster</th>
+                    <th>Jumlah Anggota</th>
+                    <th>Pendapatan</th>
+                    <th>Tanggungan</th>
+                    <th>Pendidikan</th>
+                    <th>Kondisi Rumah</th>
+                    <th>Bansos</th>
+                </tr>
+            </thead>
             <tbody>
             @foreach($session->centroids->sortBy('cluster') as $c)
             <tr class="cluster-{{ strtolower($c->label) }}">
-                <td><span class="badge badge-{{ strtolower($c->label) }}">{{ $c->label }}</span></td>
-                <td class="text-center">{{ $c->jumlah_anggota }}</td>
+                <td><span class="badge badge-{{ strtolower($c->label) }}">{{ match($c->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $c->label } }}</span></td>
+                <td class="text-center">{{ $c->jumlah_anggota }} orang</td>
                 <td class="text-right">{{ number_format($c->centroid_pendapatan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_tanggungan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_pendidikan, 4) }}</td>
@@ -81,26 +342,65 @@
             @endforeach
             </tbody>
         </table>
-        <p style="font-size:9px;color:#999;">* Nilai centroid dalam skala normalisasi Min-Max (0-1)</p>
+        <div class="catatan">* Nilai centroid ditampilkan dalam skala normalisasi Min-Max (0–1).</div>
     </div>
 
+    {{-- Detail per Cluster --}}
     @php
         $rekomendasi = [
-            'Rendah' => 'Rekomendasi: Bantuan bahan pokok, bantuan uang tunai, program jaring pengaman sosial.',
-            'Sedang' => 'Rekomendasi: Pelatihan keterampilan, bantuan modal UMKM, program pengembangan kapasitas.',
-            'Tinggi' => 'Rekomendasi: Program mentor dan pembina masyarakat, fasilitator pembangunan desa.',
+            'Rendah' => [
+                'title' => 'Rekomendasi Bantuan',
+                'text' => 'Prioritas penerima bantuan sosial berupa bahan pokok, bantuan langsung tunai (BLT), Program Keluarga Harapan (PKH), dan program jaring pengaman sosial lainnya.',
+            ],
+            'Sedang' => [
+                'title' => 'Rekomendasi Program',
+                'text' => 'Target program pelatihan keterampilan, bantuan modal usaha mikro (UMKM), program pengembangan kapasitas, dan pendampingan ekonomi produktif.',
+            ],
+            'Tinggi' => [
+                'title' => 'Rekomendasi Peran',
+                'text' => 'Potensi sebagai mentor dan pembina masyarakat, fasilitator pembangunan desa, serta mitra dalam program pemberdayaan ekonomi warga.',
+            ],
         ];
+        $clusterNames = [
+            'Rendah' => 'Ekonomi Rendah',
+            'Sedang' => 'Ekonomi Menengah',
+            'Tinggi' => 'Ekonomi Mampu',
+        ];
+        $romanNumerals = [4 => 'IV', 5 => 'V', 6 => 'VI', 7 => 'VII'];
+        $sectionNum = 4;
     @endphp
 
     @foreach(['Rendah', 'Sedang', 'Tinggi'] as $label)
         @php $members = $session->results->where('label', $label); @endphp
         @if($members->count() > 0)
         <div class="page-break"></div>
+
+        {{-- Repeat Kop on new page --}}
+        <div class="kop-surat">
+            <div class="nama-instansi">Pemerintah Desa</div>
+            <div class="alamat">Alamat: Jl. Desa No. 01 — Telp: (021) 000-0000</div>
+        </div>
+        <div class="kop-border-double"></div>
+
         <div class="section">
-            <div class="section-title">Cluster {{ $label }} — {{ $members->count() }} Warga</div>
-            <div class="rekomendasi">{{ $rekomendasi[$label] }}</div>
-            <table class="summary-table">
-                <thead><tr><th>No</th><th>NIK</th><th>Nama</th><th>Pendidikan KK</th><th>Pendapatan</th><th>Tanggungan</th><th>Kondisi Rumah</th><th>Bansos</th></tr></thead>
+            <div class="section-title">{{ $romanNumerals[$sectionNum] }}. Daftar Anggota Cluster — {{ $clusterNames[$label] }} ({{ $members->count() }} Warga)</div>
+            <div class="rekomendasi">
+                <strong>{{ $rekomendasi[$label]['title'] }}:</strong>
+                {{ $rekomendasi[$label]['text'] }}
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width:25px;">No</th>
+                        <th>NIK</th>
+                        <th>Nama Lengkap</th>
+                        <th>Pendidikan KK</th>
+                        <th>Pendapatan</th>
+                        <th>Tanggungan</th>
+                        <th>Kondisi Rumah</th>
+                        <th>Bansos</th>
+                    </tr>
+                </thead>
                 <tbody>
                 @foreach($members->values() as $i => $r)
                 <tr>
@@ -117,16 +417,32 @@
                 </tbody>
             </table>
         </div>
+        @php $sectionNum++; @endphp
         @endif
     @endforeach
 
+    {{-- Tanda Tangan --}}
     <div class="signature-area">
-        <table><tr>
-            <td class="signature-box"><div class="title">Administrator</div><div class="name">{{ $session->user->name ?? '_______________' }}</div></td>
-            <td class="signature-box"><div class="title">Kepala Desa</div><div class="name">{{ $session->validatedByUser->name ?? '_______________' }}</div></td>
-        </tr></table>
+        <table>
+            <tr>
+                <td class="signature-box">
+                    <div class="jabatan">Mengetahui,<br>Kepala Desa</div>
+                    <div class="nama">{{ $session->validatedByUser->name ?? '.........................' }}</div>
+                    <div class="nip">NIP. ................................</div>
+                </td>
+                <td class="signature-box">
+                    <div class="tempat-tanggal">................, {{ now()->translatedFormat('d F Y') }}</div>
+                    <div class="jabatan">Dibuat Oleh,<br>Administrator</div>
+                    <div class="nama">{{ $session->user->name ?? '.........................' }}</div>
+                    <div class="nip">NIP. ................................</div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <div class="footer">Dokumen ini dihasilkan otomatis oleh Sistem Pengelompokan Warga K-Means pada {{ now()->format('d F Y H:i') }} WIB</div>
+    <div class="footer">
+        Dokumen Resmi — Dihasilkan oleh Sistem Pengelompokan Warga K-Means &mdash; {{ now()->translatedFormat('d F Y') }} pukul {{ now()->format('H:i') }} WIB<br>
+        Dokumen ini bersifat rahasia dan hanya untuk keperluan internal pemerintah desa.
+    </div>
 </body>
 </html>

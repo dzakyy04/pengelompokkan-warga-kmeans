@@ -65,7 +65,7 @@
 
     @if($pending->count() > 0)
     <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table id="pendingTable" class="w-full text-sm">
             <thead class="bg-gray-50 dark:bg-slate-700/50"><tr>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">No</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Nama Warga</th>
@@ -94,7 +94,7 @@
                     };
                 @endphp
                 <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $loop->iteration + ($pending->currentPage() - 1) * $pending->perPage() }}</td>
+                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $loop->iteration }}</td>
                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $item->warga->nama_lengkap ?? '-' }}</td>
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $item->warga->nik ?? '-' }}</td>
                     <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">Rp {{ number_format($item->warga->pendapatan ?? 0, 0, ',', '.') }}</td>
@@ -161,11 +161,6 @@
             </tbody>
         </table>
     </div>
-
-    {{-- Pagination --}}
-    <div class="p-4 border-t border-gray-200 dark:border-slate-700">
-        {{ $pending->links() }}
-    </div>
     @else
     <div class="text-center py-12 text-gray-400 dark:text-gray-500">
         <svg class="w-12 h-12 mx-auto mb-2 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -184,5 +179,24 @@ function toggleRejectForm(id) {
         form.classList.toggle('hidden');
     }
 }
+
+$(document).ready(function() {
+    $('#pendingTable').DataTable({
+        language: {
+            search: "Cari: ",
+            lengthMenu: "Tampilkan _MENU_ data",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            infoEmpty: "Tidak ada data",
+            infoFiltered: "(disaring dari _MAX_ total data)",
+            zeroRecords: "Tidak ada data yang cocok",
+            paginate: { first: "«", last: "»", next: "›", previous: "‹" }
+        },
+        pageLength: 10,
+        order: [[0, 'asc']],
+        columnDefs: [
+            { orderable: false, targets: [7] }
+        ]
+    });
+});
 </script>
 @endpush

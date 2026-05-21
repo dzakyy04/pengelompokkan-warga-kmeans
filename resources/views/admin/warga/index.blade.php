@@ -25,78 +25,134 @@
 </div>
 
 {{-- Filter --}}
-<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-4 transition-colors duration-200">
-    <form method="GET" class="flex flex-col md:flex-row gap-3">
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau NIK..."
-            class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors duration-200">
+<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-5 mb-4 transition-colors duration-200">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
         <div class="relative">
-            <select name="kelompok" class="appearance-none pl-4 pr-9 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-colors duration-200">
-                <option value="">Semua Kelompok</option>
-                <option value="Rendah" {{ request('kelompok') == 'Rendah' ? 'selected' : '' }}>Ekonomi Rendah</option>
-                <option value="Sedang" {{ request('kelompok') == 'Sedang' ? 'selected' : '' }}>Ekonomi Menengah</option>
-                <option value="Tinggi" {{ request('kelompok') == 'Tinggi' ? 'selected' : '' }}>Ekonomi Mampu</option>
+            <select id="f_pendidikan" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Semua Pendidikan</option>
+                @foreach($pendidikans as $p)
+                <option value="{{ $p->nama }}">{{ $p->nama }}</option>
+                @endforeach
             </select>
-            <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </span>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
         </div>
-        <button type="submit" class="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-xl text-sm font-medium transition">Cari</button>
-        @if(request()->hasAny(['search', 'kelompok']))
-        <a href="{{ route('admin.warga.index') }}" class="px-4 py-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm font-medium">Reset</a>
-        @endif
-    </form>
+        <div class="relative">
+            <select id="f_kondisi" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Semua Kondisi Rumah</option>
+                @foreach($kondisiRumahs as $kr)
+                <option value="{{ $kr->nama }}">{{ $kr->nama }}</option>
+                @endforeach
+            </select>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+        </div>
+        <div class="relative">
+            <select id="f_bansos" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Semua Bansos</option>
+                @foreach($bansos as $b)
+                <option value="{{ $b->nama }}">{{ $b->nama }}</option>
+                @endforeach
+            </select>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+        </div>
+        <div class="relative">
+            <select id="f_kelompok" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Semua Kelompok</option>
+                <option value="Rendah">Ekonomi Rendah</option>
+                <option value="Menengah">Ekonomi Menengah</option>
+                <option value="Mampu">Ekonomi Mampu</option>
+            </select>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+        </div>
+        <div class="relative">
+            <select id="f_status" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                <option value="">Semua Status</option>
+                <option value="Menunggu Validasi">Menunggu Validasi</option>
+                <option value="Disetujui">Disetujui</option>
+                <option value="Ditolak">Ditolak</option>
+            </select>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+            <label class="block text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Pendapatan</label>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 text-xs pointer-events-none">Rp.</span>
+                    <input type="text" id="f_pendapatan_min" placeholder="Min"
+                        class="pendapatan-mask w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 text-xs pointer-events-none">Rp.</span>
+                    <input type="text" id="f_pendapatan_max" placeholder="Max"
+                        class="pendapatan-mask w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Tanggungan</label>
+            <div class="grid grid-cols-2 gap-2">
+                <input type="number" id="f_tanggungan_min" placeholder="Min" min="0"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                <input type="number" id="f_tanggungan_max" placeholder="Max" min="0"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+            </div>
+        </div>
+    </div>
+    <button type="button" id="resetFilter" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium transition hidden">
+        <svg class="w-4 h-4 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        Reset Filter
+    </button>
 </div>
 
 {{-- Table --}}
-<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200">
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700">
+<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200" style="max-width: 100%; overflow-x: auto;">
+    <table id="wargaTable" class="w-full text-sm display" style="width:100%">
+        <thead class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700">
                 <tr>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">NIK</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Nama</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pendidikan KK</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kondisi Rumah</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Bansos</th>
-                    <th class="px-4 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pendapatan</th>
-                    <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Tanggungan</th>
-                    <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kelompok</th>
-                    <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Aksi</th>
+                    <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">No</th>
+                    <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">NIK</th>
+                    <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Nama</th>
+                    <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pendidikan KK</th>
+                    <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kondisi Rumah</th>
+                    <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Bansos</th>
+                    <th class="px-3 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pendapatan</th>
+                    <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Tanggungan</th>
+                    <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kelompok</th>
+                    <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
                 @forelse($wargas as $w)
                 <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                    <td class="px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400">{{ $w->nik }}</td>
-                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $w->nama_lengkap }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $w->pendidikan->nama ?? '-' }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $w->kondisiRumah->nama ?? '-' }}</td>
-                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400 truncate max-w-[150px]" title="{{ $w->bansos->nama ?? '-' }}">{{ $w->bansos->nama ?? '-' }}</td>
-                    <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">Rp {{ number_format($w->pendapatan, 0, ',', '.') }}</td>
-                    <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{{ $w->jumlah_tanggungan }}</td>
-                    <td class="px-4 py-3 text-center">
+                    <td class="px-3 py-3 text-center text-gray-500 dark:text-gray-400">{{ $loop->iteration }}</td>
+                    <td class="px-3 py-3 font-mono text-xs text-gray-600 dark:text-gray-400">{{ $w->nik }}</td>
+                    <td class="px-3 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">{{ $w->nama_lengkap }}</td>
+                    <td class="px-3 py-3 text-gray-600 dark:text-gray-400">{{ $w->pendidikan->nama ?? '-' }}</td>
+                    <td class="px-3 py-3 text-gray-600 dark:text-gray-400">{{ $w->kondisiRumah->nama ?? '-' }}</td>
+                    <td class="px-3 py-3 text-gray-600 dark:text-gray-400">{{ $w->bansos->nama ?? '-' }}</td>
+                    <td class="px-3 py-3 text-right text-gray-600 dark:text-gray-400 whitespace-nowrap" data-order="{{ $w->pendapatan }}" data-search="{{ $w->pendapatan }}">Rp {{ number_format($w->pendapatan, 0, ',', '.') }}</td>
+                    <td class="px-3 py-3 text-center text-gray-600 dark:text-gray-400">{{ $w->jumlah_tanggungan }}</td>
+                    <td class="px-3 py-3 text-center">
                         @if($w->latestClusteringResult)
-                        <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($w->latestClusteringResult->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($w->latestClusteringResult->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $w->latestClusteringResult->label } }}</span>
+                        <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ match($w->latestClusteringResult->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($w->latestClusteringResult->label) { 'Rendah' => 'Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $w->latestClusteringResult->label } }}</span>
                         @elseif($w->latestClassification)
                         @php $cls = $w->latestClassification; @endphp
-                        <div class="flex flex-col items-center gap-1">
-                            <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($cls->assigned_label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($cls->assigned_label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $cls->assigned_label } }}</span>
-                            <span class="inline-flex items-center gap-1 text-[10px] {{ $cls->status === 'pending' ? 'text-amber-500' : ($cls->status === 'approved' ? 'text-emerald-500' : 'text-red-500') }}">
-                                @if($cls->status === 'pending')
-                                <svg class="w-3 h-3 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5"/></svg>
-                                Menunggu validasi
-                                @elseif($cls->status === 'approved')
-                                ✓ Disetujui
-                                @else
-                                ✗ Ditolak
-                                @endif
-                            </span>
+                        <div class="flex flex-col items-center gap-0.5">
+                            <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ match($cls->assigned_label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($cls->assigned_label) { 'Rendah' => 'Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $cls->assigned_label } }}</span>
+                            @if($cls->status === 'pending')
+                            <span class="text-[10px] text-amber-600 dark:text-amber-400 font-medium whitespace-nowrap">Menunggu Validasi</span>
+                            @elseif($cls->status === 'approved')
+                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Disetujui</span>
+                            @elseif($cls->status === 'rejected')
+                            <span class="text-[10px] text-red-600 dark:text-red-400 font-medium">Ditolak</span>
+                            @endif
                         </div>
                         @else
                         <span class="text-gray-400 dark:text-gray-500 text-xs">-</span>
                         @endif
                     </td>
-                    <td class="px-4 py-3 text-center">
+                    <td class="px-3 py-3 text-center">
                         <div class="flex items-center justify-center gap-1">
                             <button type="button" onclick="openModal('editWargaModal-{{ $w->id }}')" class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition" title="Edit">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -111,14 +167,10 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="9" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada data warga.</td></tr>
+                <tr><td colspan="10" class="px-3 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada data warga.</td></tr>
                 @endforelse
             </tbody>
         </table>
-    </div>
-    @if($wargas->hasPages())
-    <div class="px-4 py-3 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400">{{ $wargas->links() }}</div>
-    @endif
 </div>
 
 {{-- Create Modal --}}
@@ -183,6 +235,91 @@
 
 @push('scripts')
 <script>
+    // Custom DataTables filter functions
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        if (settings.nTable.id !== 'wargaTable') return true;
+
+        var pendidikan = $('#f_pendidikan').val();
+        var kondisi    = $('#f_kondisi').val();
+        var bansos     = $('#f_bansos').val();
+        var kelompok   = $('#f_kelompok').val();
+        var status     = $('#f_status').val();
+        var pendMin    = parseInt($('#f_pendapatan_min').val().replace(/[^0-9]/g, '')) || 0;
+        var pendMax    = parseInt($('#f_pendapatan_max').val().replace(/[^0-9]/g, '')) || Infinity;
+        var tangMin    = parseInt($('#f_tanggungan_min').val()) || 0;
+        var tangMax    = parseInt($('#f_tanggungan_max').val()) || Infinity;
+
+        var colPendidikan = data[3] || '';
+        var colKondisi    = data[4] || '';
+        var colBansos     = data[5] || '';
+        var colPendapatan = parseInt($(settings.aoData[dataIndex].nTr).find('td:eq(6)').data('order')) || 0;
+        var colTanggungan = parseInt(data[7]) || 0;
+        var colKelompok   = data[8] || '';
+        var colStatus     = data[8] || '';
+
+        if (pendidikan && colPendidikan.indexOf(pendidikan) === -1) return false;
+        if (kondisi    && colKondisi.indexOf(kondisi) === -1)       return false;
+        if (bansos     && colBansos.indexOf(bansos) === -1)         return false;
+        if (kelompok   && colKelompok.indexOf(kelompok) === -1)     return false;
+        if (status     && colStatus.indexOf(status) === -1)         return false;
+        if (colPendapatan < pendMin || colPendapatan > pendMax)     return false;
+        if (colTanggungan < tangMin || colTanggungan > tangMax)     return false;
+
+        return true;
+    });
+
+    $(document).ready(function() {
+        var table = $('#wargaTable').DataTable({
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data",
+                infoFiltered: "(disaring dari _MAX_ total data)",
+                zeroRecords: "Tidak ada data yang cocok",
+                paginate: { first: "«", last: "»", next: "›", previous: "‹" }
+            },
+            pageLength: 10,
+            order: [[0, 'asc']],
+            scrollX: true,
+            autoWidth: false,
+            columnDefs: [
+                { orderable: false, targets: [9] },
+                { width: '30px', targets: 0 },
+                { type: 'num', targets: [6, 7] }
+            ]
+        });
+
+        // Trigger redraw on any filter change
+        function applyFilters() {
+            table.draw();
+            var hasFilter = $('#f_pendidikan').val() || $('#f_kondisi').val() || $('#f_bansos').val() ||
+                            $('#f_kelompok').val() || $('#f_status').val() ||
+                            $('#f_pendapatan_min').val() || $('#f_pendapatan_max').val() ||
+                            $('#f_tanggungan_min').val() || $('#f_tanggungan_max').val();
+            $('#resetFilter').toggleClass('hidden', !hasFilter);
+        }
+
+        $('#f_pendidikan, #f_kondisi, #f_bansos, #f_kelompok, #f_status').on('change', applyFilters);
+        $('#f_pendapatan_min, #f_pendapatan_max, #f_tanggungan_min, #f_tanggungan_max').on('input', applyFilters);
+
+        // Reset all filters
+        $('#resetFilter').on('click', function() {
+            $('#f_pendidikan, #f_kondisi, #f_bansos, #f_kelompok, #f_status').val('');
+            $('#f_pendapatan_min, #f_pendapatan_max, #f_tanggungan_min, #f_tanggungan_max').val('');
+            $(this).addClass('hidden');
+            table.draw();
+        });
+
+        // Auto format mask untuk input pendapatan
+        document.querySelectorAll('.pendapatan-mask').forEach(function(input) {
+            input.addEventListener('input', function() {
+                var value = this.value.replace(/[^0-9]/g, '');
+                this.value = value ? new Intl.NumberFormat('id-ID').format(parseInt(value)) : '';
+            });
+        });
+    });
+
     function openModal(id) {
         document.getElementById(id).classList.remove('hidden');
         document.body.style.overflow = 'hidden';

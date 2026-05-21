@@ -10,7 +10,7 @@ class MasterKondisiRumahController extends Controller
 {
     public function index()
     {
-        $items = MasterKondisiRumah::withCount('wargas')->orderBy('nama')->paginate(15);
+        $items = MasterKondisiRumah::withCount('wargas')->orderBy('skor')->get();
         return view('admin.master.kondisi-rumah.index', compact('items'));
     }
 

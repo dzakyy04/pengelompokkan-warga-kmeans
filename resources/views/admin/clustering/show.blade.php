@@ -118,7 +118,7 @@
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $session->results->count() }} warga telah dikelompokkan</p>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table id="clusterResultTable" class="w-full text-sm">
             <thead class="bg-gray-50 dark:bg-slate-700/50"><tr>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">No</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">NIK</th>
@@ -152,4 +152,24 @@
         </table>
     </div>
 </div>
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#clusterResultTable').DataTable({
+        language: {
+            search: "Cari: ",
+            lengthMenu: "Tampilkan _MENU_ data",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            infoEmpty: "Tidak ada data",
+            infoFiltered: "(disaring dari _MAX_ total data)",
+            zeroRecords: "Tidak ada data yang cocok",
+            paginate: { first: "«", last: "»", next: "›", previous: "‹" }
+        },
+        pageLength: 15,
+        order: [[8, 'asc']],
+    });
+});
+</script>
+@endpush
 @endsection

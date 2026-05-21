@@ -10,7 +10,7 @@ class MasterPendidikanController extends Controller
 {
     public function index()
     {
-        $items = MasterPendidikan::withCount('wargas')->orderBy('skor')->paginate(15);
+        $items = MasterPendidikan::withCount('wargas')->orderBy('skor')->get();
         return view('admin.master.pendidikan.index', compact('items'));
     }
 
