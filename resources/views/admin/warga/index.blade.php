@@ -271,7 +271,7 @@
     $(document).ready(function() {
         var table = $('#wargaTable').DataTable({
             language: {
-                search: "Cari:",
+                search: "Cari: ",
                 lengthMenu: "Tampilkan _MENU_ data",
                 info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
                 infoEmpty: "Tidak ada data",
