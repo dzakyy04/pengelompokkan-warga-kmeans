@@ -103,11 +103,18 @@
             <h2 class="text-3xl font-bold text-gray-900 dark:text-white tracking-tight mb-2">Selamat datang</h2>
             <p class="text-gray-500 dark:text-gray-400 text-sm mb-10">Silakan masuk untuk mengelola data warga desa Anda.</p>
 
-            {{-- Error alert --}}
+            {{-- Alerts --}}
             @if(session('error'))
             <div class="flex items-center gap-2.5 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-xl px-4 py-3 mb-8">
                 <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <span>{{ session('error') }}</span>
+            </div>
+            @endif
+
+            @if(session('success'))
+            <div class="flex items-center gap-2.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm rounded-xl px-4 py-3 mb-8">
+                <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>{{ session('success') }}</span>
             </div>
             @endif
 
@@ -143,6 +150,9 @@
                         <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                             Password
                         </label>
+                        <a href="{{ route('admin.password.request') }}" class="text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors">
+                            Lupa password?
+                        </a>
                     </div>
                     <div class="relative">
                         <input

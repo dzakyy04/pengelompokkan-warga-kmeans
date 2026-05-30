@@ -211,8 +211,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + ' orang' } }
             },
             scales: {
-                x: { stacked: true, ticks: { color: theme.textColor, font: { size: 11, weight: '600' } }, grid: { display: false } },
-                y: { stacked: true, beginAtZero: true, ticks: { color: theme.textColor, font: { size: 10 }, stepSize: 1 }, grid: { color: theme.gridColor } }
+                x: { ticks: { color: theme.textColor, font: { size: 11, weight: '600' } }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { color: theme.textColor, font: { size: 10 }, stepSize: 1 }, grid: { color: theme.gridColor } }
             }
         }
     });

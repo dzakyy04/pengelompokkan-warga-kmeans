@@ -3,6 +3,9 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ClusteringController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ForgotPasswordController;
+use App\Http\Controllers\Admin\ResetPasswordController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\MasterBansosController;
 use App\Http\Controllers\Admin\MasterKondisiRumahController;
 use App\Http\Controllers\Admin\MasterPendidikanController;
@@ -17,9 +20,19 @@ Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin
 Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login.submit');
 Route::post('admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
+Route::get('admin/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.request');
+Route::post('admin/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('admin.password.email');
+Route::get('admin/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('admin.password.reset');
+Route::post('admin/reset-password', [ResetPasswordController::class, 'reset'])->name('admin.password.update');
+
 // Admin Area
 Route::prefix('admin')->middleware(['web', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+    
+    // Profile
+    Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile.index');
+    Route::put('profile/info', [ProfileController::class, 'updateInfo'])->name('admin.profile.info.update');
+    Route::post('profile/password', [ProfileController::class, 'updatePassword'])->name('admin.profile.password.update');
 
     // Warga CRUD (admin only)
     Route::get('warga/export-pdf', [WargaController::class, 'exportPdf'])->name('admin.warga.export-pdf');
