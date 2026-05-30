@@ -223,8 +223,8 @@
 <body>
     {{-- Kop Surat --}}
     <div class="kop-surat">
-        <div class="nama-instansi">Pemerintah Desa</div>
-        <div class="alamat">Alamat: Jl. Desa No. 01 — Telp: (021) 000-0000</div>
+        <div class="nama-instansi">Pemerintah Desa Sungai Rebo</div>
+        <div class="alamat">Jl. Sel., Sungai Pinang, Kec. Rambutan, Kab. Banyuasin, Sumatera Selatan</div>
     </div>
     <div class="kop-border-double"></div>
 
@@ -377,8 +377,8 @@
 
         {{-- Repeat Kop on new page --}}
         <div class="kop-surat">
-            <div class="nama-instansi">Pemerintah Desa</div>
-            <div class="alamat">Alamat: Jl. Desa No. 01 — Telp: (021) 000-0000</div>
+            <div class="nama-instansi">Pemerintah Desa Sungai Rebo</div>
+            <div class="alamat">Jl. Sel., Sungai Pinang, Kec. Rambutan, Kab. Banyuasin, Sumatera Selatan</div>
         </div>
         <div class="kop-border-double"></div>
 
@@ -425,7 +425,7 @@
 
 
     <div class="footer">
-        Dokumen Resmi — Dihasilkan oleh Sistem Data Warga Desa &mdash; {{ now()->translatedFormat('d F Y') }} pukul {{ now()->format('H:i') }} WIB<br>
+        Dokumen Resmi — Dihasilkan oleh Sistem Pengelompokan Warga Desa Sungai Rebo &mdash; {{ now()->translatedFormat('d F Y') }} pukul {{ now()->format('H:i') }} WIB<br>
         Dokumen ini bersifat rahasia dan hanya untuk keperluan internal pemerintah desa.
     </div>
 </body>

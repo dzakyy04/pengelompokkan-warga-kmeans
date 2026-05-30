@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lupa Password — Sistem Data Warga Desa</title>
+    <title>Lupa Password — Desa Sungai Rebo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css'])
@@ -27,14 +27,10 @@
         
         {{-- Logo --}}
         <div class="flex items-center gap-3 relative z-10">
-            <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-200 dark:shadow-none">
-                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-            </div>
+            <img src="{{ asset('images/logo-banyasin.png') }}" alt="Logo Desa Sungai Rebo" class="w-12 h-12 object-contain flex-shrink-0">
             <div>
-                <p class="text-emerald-900 dark:text-white font-bold text-lg leading-none tracking-tight">Data Warga Desa</p>
-                <p class="text-emerald-600 dark:text-emerald-200 text-sm mt-0.5 font-medium">Sistem Informasi</p>
+                <p class="text-emerald-900 dark:text-white font-bold text-lg leading-none tracking-tight">Desa Sungai Rebo</p>
+                <p class="text-emerald-600 dark:text-emerald-200 text-sm mt-0.5 font-medium">Sistem Pengelompokan Warga</p>
             </div>
         </div>
 
@@ -63,12 +59,10 @@
 
             {{-- Mobile: brand header --}}
             <div class="flex items-center justify-center gap-2.5 mb-10 lg:hidden">
-                <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md shadow-emerald-200 dark:shadow-none">
-                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                </div>
+                <img src="{{ asset('images/logo-banyasin.png') }}" alt="Logo Desa Sungai Rebo" class="w-10 h-10 object-contain">
                 <div>
-                    <span class="text-gray-900 dark:text-white font-bold text-lg leading-none tracking-tight block">Data Warga Desa</span>
-                    <span class="text-emerald-600 dark:text-emerald-200 text-xs font-medium block">Sistem Informasi</span>
+                    <span class="text-gray-900 dark:text-white font-bold text-lg leading-none tracking-tight block">Desa Sungai Rebo</span>
+                    <span class="text-emerald-600 dark:text-emerald-200 text-xs font-medium block">Sistem Pengelompokan Warga</span>
                 </div>
             </div>
 

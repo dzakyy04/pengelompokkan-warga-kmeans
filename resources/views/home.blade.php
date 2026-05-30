@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistem pengelompokan warga berdasarkan kondisi ekonomi untuk penyaluran bantuan sosial tepat sasaran.">
-    <title>Pengelompokan Warga — Sistem Data Warga Desa</title>
+    <meta name="description" content="Sistem pengelompokan warga Desa Sungai Rebo berdasarkan kondisi ekonomi untuk penyaluran bantuan sosial tepat sasaran.">
+    <title>Pengelompokan Warga — Desa Sungai Rebo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -23,12 +23,8 @@
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center shadow-sm">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
-                        </svg>
-                    </div>
-                    <span class="text-base font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight">Pengelompokan Warga</span>
+                    <img src="{{ asset('images/logo-banyasin.png') }}" alt="Logo Desa Sungai Rebo" class="w-9 h-9 object-contain">
+                    <span class="text-base font-semibold text-zinc-800 dark:text-zinc-100 tracking-tight">Desa Sungai Rebo</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-slate-800 transition-all duration-200 btn-tactile" aria-label="Toggle dark mode">
@@ -393,14 +389,10 @@
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center">
-                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
-                        </svg>
-                    </div>
-                    <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Sistem Data Warga Desa</span>
+                    <img src="{{ asset('images/logo-banyasin.png') }}" alt="Logo Desa Sungai Rebo" class="w-7 h-7 object-contain">
+                    <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Desa Sungai Rebo</span>
                 </div>
-                <p class="text-sm text-zinc-400 dark:text-zinc-500">&copy; {{ date('Y') }} Sistem Pengelompokan Warga</p>
+                <p class="text-sm text-zinc-400 dark:text-zinc-500">&copy; {{ date('Y') }} Sistem Pengelompokan Warga Desa Sungai Rebo</p>
             </div>
         </div>
     </footer>

@@ -1,5 +1,5 @@
 <footer class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 py-4 px-6 transition-colors duration-200">
     <div class="text-center text-sm text-gray-600 dark:text-gray-400">
-        &copy; {{ date('Y') }} <span class="font-semibold text-emerald-600 dark:text-emerald-400">Sistem Data Warga Desa</span>. All rights reserved.
+        &copy; {{ date('Y') }} <span class="font-semibold text-emerald-600 dark:text-emerald-400">Desa Sungai Rebo</span>. Sistem Pengelompokan Warga.
     </div>
 </footer>
