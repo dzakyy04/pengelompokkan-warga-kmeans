@@ -17,18 +17,38 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             Excel
         </a>
+        @if(auth()->user()->isAdmin())
         <button type="button" onclick="openModal('createWargaModal')" class="inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Tambah Warga
         </button>
+        @endif
     </div>
 </div>
 
 {{-- Filter --}}
 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-5 mb-4 transition-colors duration-200">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+    <div class="flex justify-between items-center mb-3">
+        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Filter Data Warga</h3>
+        <button type="button" id="resetFilter" class="px-3 py-1.5 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-medium transition hidden whitespace-nowrap">
+            <svg class="w-3 h-3 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            Reset Filter
+        </button>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {{-- Baris 1 --}}
         <div class="relative">
-            <select id="f_pekerjaan" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="f_pendidikan" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
+                <option value="">Semua Pendidikan KK</option>
+                @foreach($pendidikans as $p)
+                <option value="{{ $p->nama }}">{{ $p->nama }}</option>
+                @endforeach
+            </select>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+        </div>
+        <div class="relative">
+            <select id="f_pekerjaan" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
                 <option value="">Semua Pekerjaan</option>
                 @foreach($presetPekerjaan as $preset)
                 <option value="{{ $preset['pekerjaan'] }}">{{ $preset['pekerjaan'] }}</option>
@@ -38,7 +58,7 @@
             <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
         </div>
         <div class="relative">
-            <select id="f_status_prod" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="f_status_prod" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
                 <option value="">Semua Status Produktivitas</option>
                 @foreach($statusProduktivitas as $sp)
                 <option value="{{ $sp['status'] }}">{{ $sp['status'] }}</option>
@@ -47,7 +67,31 @@
             <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
         </div>
         <div class="relative">
-            <select id="f_kelompok" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+            <input type="number" id="f_tanggungan" placeholder="Jml. Tanggungan (Angka Pasti)" min="0"
+                class="w-full pl-3 pr-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
+        </div>
+
+        {{-- Baris 2 --}}
+        <div class="relative">
+            <select id="f_kondisi_rumah" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
+                <option value="">Semua Kondisi Rumah</option>
+                @foreach($kondisiRumahs as $k)
+                <option value="{{ $k->nama }}">{{ $k->nama }}</option>
+                @endforeach
+            </select>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+        </div>
+        <div class="relative">
+            <select id="f_bansos" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
+                <option value="">Semua Jenis Bansos</option>
+                @foreach($bansos as $b)
+                <option value="{{ $b->nama }}">{{ $b->nama }}</option>
+                @endforeach
+            </select>
+            <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+        </div>
+        <div class="relative">
+            <select id="f_kelompok" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
                 <option value="">Semua Kelompok</option>
                 <option value="Rendah">Ekonomi Rendah</option>
                 <option value="Menengah">Ekonomi Menengah</option>
@@ -56,30 +100,12 @@
             <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
         </div>
         <div class="relative">
-            <select id="f_status" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="f_status" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
                 <option value="">Semua Status Validasi</option>
                 <option value="Menunggu Validasi">Menunggu Validasi</option>
-                <option value="Disetujui">Disetujui</option>
-                <option value="Ditolak">Ditolak</option>
+                <option value="Sudah Divalidasi">Sudah Divalidasi</option>
             </select>
             <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
-        </div>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-        <div>
-            <label class="block text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Tanggungan</label>
-            <div class="grid grid-cols-2 gap-2">
-                <input type="number" id="f_tanggungan_min" placeholder="Min" min="0"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
-                <input type="number" id="f_tanggungan_max" placeholder="Max" min="0"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
-            </div>
-        </div>
-        <div class="flex items-end">
-            <button type="button" id="resetFilter" class="px-4 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium transition hidden">
-                <svg class="w-4 h-4 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                Reset Filter
-            </button>
         </div>
     </div>
 </div>
@@ -99,7 +125,9 @@
                     <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kondisi Rumah</th>
                     <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Bansos</th>
                     <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kelompok</th>
+                    @if(auth()->user()->isAdmin())
                     <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
@@ -132,6 +160,7 @@
                     <td class="px-3 py-3 text-center">
                         @if($w->latestClusteringResult)
                         <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ match($w->latestClusteringResult->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($w->latestClusteringResult->label) { 'Rendah' => 'Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $w->latestClusteringResult->label } }}</span>
+                        <span class="hidden">Sudah Divalidasi</span>
                         @elseif($w->latestClassification)
                         @php $cls = $w->latestClassification; @endphp
                         <div class="flex flex-col items-center gap-0.5">
@@ -140,6 +169,7 @@
                             <span class="text-[10px] text-amber-600 dark:text-amber-400 font-medium whitespace-nowrap">Menunggu Validasi</span>
                             @elseif($cls->status === 'approved')
                             <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Disetujui</span>
+                            <span class="hidden">Sudah Divalidasi</span>
                             @elseif($cls->status === 'rejected')
                             <span class="text-[10px] text-red-600 dark:text-red-400 font-medium">Ditolak</span>
                             @endif
@@ -148,6 +178,7 @@
                         <span class="text-gray-400 dark:text-gray-500 text-xs">-</span>
                         @endif
                     </td>
+                    @if(auth()->user()->isAdmin())
                     <td class="px-3 py-3 text-center">
                         <div class="flex items-center justify-center gap-1">
                             <button type="button" onclick="openModal('editWargaModal-{{ $w->id }}')" class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition" title="Edit">
@@ -161,9 +192,10 @@
                             </form>
                         </div>
                     </td>
+                    @endif
                 </tr>
                 @empty
-                <tr><td colspan="11" class="px-3 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada data warga.</td></tr>
+                <tr><td colspan="{{ auth()->user()->isAdmin() ? '11' : '10' }}" class="px-3 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada data warga.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -235,25 +267,33 @@
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
         if (settings.nTable.id !== 'wargaTable') return true;
 
+        var pendidikan  = $('#f_pendidikan').val();
         var pekerjaan   = $('#f_pekerjaan').val();
         var statusProd  = $('#f_status_prod').val();
+        var tanggungan  = $('#f_tanggungan').val();
+        var kondisi     = $('#f_kondisi_rumah').val();
+        var bansos      = $('#f_bansos').val();
         var kelompok    = $('#f_kelompok').val();
         var status      = $('#f_status').val();
-        var tangMin     = parseInt($('#f_tanggungan_min').val()) || 0;
-        var tangMax     = parseInt($('#f_tanggungan_max').val()) || Infinity;
 
         // col indices: 0=No, 1=NIK, 2=Nama, 3=Pendidikan, 4=Pekerjaan, 5=StatusProd, 6=Tanggungan, 7=KondisiRumah, 8=Bansos, 9=Kelompok, 10=Aksi
+        var colPendidikan = data[3] || '';
         var colPekerjaan  = data[4] || '';
         var colStatusProd = data[5] || '';
         var colTanggungan = parseInt(data[6]) || 0;
+        var colKondisi    = data[7] || '';
+        var colBansos     = data[8] || '';
         var colKelompok   = data[9] || '';
         var colStatus     = data[9] || '';
 
+        if (pendidikan && colPendidikan.indexOf(pendidikan) === -1)  return false;
         if (pekerjaan  && colPekerjaan.indexOf(pekerjaan) === -1)    return false;
         if (statusProd && colStatusProd.indexOf(statusProd) === -1)  return false;
+        if (kondisi    && colKondisi.indexOf(kondisi) === -1)        return false;
+        if (bansos     && colBansos.indexOf(bansos) === -1)          return false;
         if (kelompok   && colKelompok.indexOf(kelompok) === -1)      return false;
         if (status     && colStatus.indexOf(status) === -1)          return false;
-        if (colTanggungan < tangMin || colTanggungan > tangMax)      return false;
+        if (tanggungan !== '' && parseInt(colTanggungan) !== parseInt(tanggungan)) return false;
 
         return true;
     });
@@ -274,7 +314,9 @@
             scrollX: true,
             autoWidth: false,
             columnDefs: [
+                @if(auth()->user()->isAdmin())
                 { orderable: false, targets: [10] },
+                @endif
                 { width: '30px', targets: 0 },
                 { type: 'num', targets: [6] }
             ]
@@ -283,19 +325,19 @@
         // Trigger redraw on any filter change
         function applyFilters() {
             table.draw();
-            var hasFilter = $('#f_pekerjaan').val() || $('#f_status_prod').val() ||
-                            $('#f_kelompok').val() || $('#f_status').val() ||
-                            $('#f_tanggungan_min').val() || $('#f_tanggungan_max').val();
+            var hasFilter = $('#f_pendidikan').val() || $('#f_pekerjaan').val() || $('#f_status_prod').val() ||
+                            $('#f_kondisi_rumah').val() || $('#f_bansos').val() ||
+                            $('#f_kelompok').val() || $('#f_status').val() || $('#f_tanggungan').val();
             $('#resetFilter').toggleClass('hidden', !hasFilter);
         }
 
-        $('#f_pekerjaan, #f_status_prod, #f_kelompok, #f_status').on('change', applyFilters);
-        $('#f_tanggungan_min, #f_tanggungan_max').on('input', applyFilters);
+        $('#f_pendidikan, #f_pekerjaan, #f_status_prod, #f_kondisi_rumah, #f_bansos, #f_kelompok, #f_status').on('change', applyFilters);
+        $('#f_tanggungan').on('input', applyFilters);
 
         // Reset all filters
         $('#resetFilter').on('click', function() {
-            $('#f_pekerjaan, #f_status_prod, #f_kelompok, #f_status').val('');
-            $('#f_tanggungan_min, #f_tanggungan_max').val('');
+            $('#f_pendidikan, #f_pekerjaan, #f_status_prod, #f_kondisi_rumah, #f_bansos, #f_kelompok, #f_status').val('');
+            $('#f_tanggungan').val('');
             $(this).addClass('hidden');
             table.draw();
         });

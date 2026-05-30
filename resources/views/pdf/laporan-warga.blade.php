@@ -191,7 +191,7 @@
     {{-- Judul Dokumen --}}
     <div class="judul-dokumen">
         <h1>Laporan Data Warga</h1>
-        <div class="nomor">Sistem Pengelompokan Warga — Metode K-Means Clustering</div>
+        <div class="nomor">Sistem Data Warga Desa — Pengelompokan Warga</div>
     </div>
 
     {{-- Informasi --}}
@@ -274,21 +274,9 @@
         &bull; <strong>Mampu</strong> — Ekonomi mampu, potensi sebagai mentor dan pembina masyarakat
     </div>
 
-    {{-- Tanda Tangan --}}
-    <div class="signature-area">
-        <table>
-            <tr>
-                <td class="signature-box" style="text-align: right; padding-right: 0;">
-                    <div class="tempat-tanggal">................, {{ now()->translatedFormat('d F Y') }}</div>
-                    <div class="jabatan">Mengetahui,<br>Kepala Desa</div>
-                    <div class="nama">( ............................ )</div>
-                </td>
-            </tr>
-        </table>
-    </div>
 
     <div class="footer">
-        Dokumen ini dihasilkan secara otomatis oleh Sistem Pengelompokan Warga K-Means &mdash; {{ now()->translatedFormat('d F Y') }} pukul {{ now()->format('H:i') }} WIB
+        Dokumen ini dihasilkan secara otomatis oleh Sistem Data Warga Desa &mdash; {{ now()->translatedFormat('d F Y') }} pukul {{ now()->format('H:i') }} WIB
     </div>
 </body>
 </html>

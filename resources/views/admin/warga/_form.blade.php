@@ -178,36 +178,38 @@
 
 <div class="bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
     <h3 class="text-base font-bold text-gray-900 dark:text-white mb-4">Kondisi Rumah & Penerima Bansos</h3>
-    <div class="mb-4">
-        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Kondisi Rumah <span class="text-red-500">*</span></label>
-        <div class="relative w-full md:w-1/2">
-            <select name="kondisi_rumah_id" required class="appearance-none w-full pl-4 pr-9 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
-                <option value="">Pilih Kondisi Rumah</option>
-                @foreach($kondisiRumahs as $kr)
-                <option value="{{ $kr->id }}" {{ old('kondisi_rumah_id', $w->kondisi_rumah_id ?? '') == $kr->id ? 'selected' : '' }}>{{ $kr->nama }}</option>
-                @endforeach
-            </select>
-            <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Kondisi Rumah <span class="text-red-500">*</span></label>
+            <div class="relative w-full">
+                <select name="kondisi_rumah_id" required class="appearance-none w-full pl-4 pr-9 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <option value="">Pilih Kondisi Rumah</option>
+                    @foreach($kondisiRumahs as $kr)
+                    <option value="{{ $kr->id }}" {{ old('kondisi_rumah_id', $w->kondisi_rumah_id ?? '') == $kr->id ? 'selected' : '' }}>{{ $kr->nama }}</option>
+                    @endforeach
+                </select>
+                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </span>
+            </div>
+            @error('kondisi_rumah_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
-        @error('kondisi_rumah_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-    </div>
-    <div>
-        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bansos yang Diterima <span class="text-red-500">*</span></label>
-        <div class="relative w-full md:w-1/2">
-            <select name="bansos_id" required class="appearance-none w-full pl-4 pr-9 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
-                <option value="">Pilih Status Bansos</option>
-                @foreach($bansos as $b)
-                <option value="{{ $b->id }}" {{ old('bansos_id', $w->bansos_id ?? '') == $b->id ? 'selected' : '' }}>{{ $b->nama }}</option>
-                @endforeach
-            </select>
-            <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </span>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Bansos yang Diterima <span class="text-red-500">*</span></label>
+            <div class="relative w-full">
+                <select name="bansos_id" required class="appearance-none w-full pl-4 pr-9 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <option value="">Pilih Status Bansos</option>
+                    @foreach($bansos as $b)
+                    <option value="{{ $b->id }}" {{ old('bansos_id', $w->bansos_id ?? '') == $b->id ? 'selected' : '' }}>{{ $b->nama }}</option>
+                    @endforeach
+                </select>
+                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </span>
+            </div>
+            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Pilih "Tidak Menerima" jika warga tidak menerima bansos.</p>
+            @error('bansos_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Pilih satu jenis bansos yang diterima. Pilih "Tidak Menerima" jika warga tidak menerima bansos apa pun.</p>
-        @error('bansos_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
 </div>
 

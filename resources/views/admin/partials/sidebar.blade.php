@@ -29,7 +29,6 @@
             <span class="text-sm sidebar-text">Dashboard</span>
         </a>
 
-        @if($user->isAdmin())
         {{-- Data Warga --}}
         <div class="px-3 pt-4 pb-1 sidebar-text"><p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Data Warga</p></div>
         <a href="{{ route('admin.warga.index') }}"
@@ -40,6 +39,7 @@
             <span class="text-sm sidebar-text">Daftar Warga</span>
         </a>
 
+        @if($user->isAdmin())
         {{-- Master Data --}}
         <div class="px-3 pt-4 pb-1 sidebar-text"><p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Master Data</p></div>
         <a href="{{ route('admin.master-pendidikan.index') }}"
@@ -81,7 +81,7 @@
             <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.clustering.index') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
-            <span class="text-sm sidebar-text">Proses Warga</span>
+        <span class="text-sm sidebar-text">Pengelompokan</span>
         </a>
         @endif
         <a href="{{ route('admin.clustering.history') }}"
@@ -89,7 +89,7 @@
             <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.clustering.history') || request()->routeIs('admin.clustering.show') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
             </svg>
-            <span class="text-sm sidebar-text">Riwayat Hasil</span>
+            <span class="text-sm sidebar-text">Hasil Pengelompokan</span>
         </a>
         @if($user->isKepalaDesa())
         @php $pendingValidationCount = \App\Models\WargaClassificationQueue::where('status', 'pending')->count(); @endphp
@@ -98,7 +98,7 @@
             <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.clustering.pending-classifications') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span class="text-sm sidebar-text">Validasi Warga Baru</span>
+            <span class="text-sm sidebar-text">Verifikasi Warga Baru</span>
             @if($pendingValidationCount > 0)
             <span class="ml-auto bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full sidebar-text">{{ $pendingValidationCount }}</span>
             @endif

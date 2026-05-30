@@ -61,7 +61,7 @@
                 {{-- Decorative background shape --}}
                 <div class="absolute inset-0 bg-white dark:bg-emerald-900/30 rounded-full blur-3xl opacity-70"></div>
                 
-                <img src="{{ asset('images/login-3d.png') }}" alt="Ilustrasi Perangkat Desa" class="relative z-10 w-4/5 h-auto object-contain drop-shadow-2xl" style="animation: float 6s ease-in-out infinite;">
+                <img src="{{ asset('images/login-3d.png') }}" alt="Ilustrasi Perangkat Desa" class="relative z-10 w-3/5 lg:w-1/2 h-auto object-contain drop-shadow-2xl" style="animation: float 6s ease-in-out infinite;">
             </div>
         </div>
 

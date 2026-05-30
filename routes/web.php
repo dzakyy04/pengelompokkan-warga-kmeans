@@ -45,16 +45,14 @@ Route::prefix('admin')->middleware(['web', \App\Http\Middleware\AdminMiddleware:
     Route::resource('master-bansos', MasterBansosController::class)->names('admin.master-bansos')->except(['create', 'edit', 'show']);
     Route::get('master-status-produktivitas', [MasterStatusProduktivitasController::class, 'index'])->name('admin.master-status-produktivitas.index');
 
-    // Clustering
+    // Pengelompokan
     Route::get('clustering', [ClusteringController::class, 'index'])->name('admin.clustering.index');
     Route::post('clustering/process', [ClusteringController::class, 'process'])->name('admin.clustering.process');
     Route::get('clustering/history', [ClusteringController::class, 'history'])->name('admin.clustering.history');
     Route::get('clustering/pending-classifications', [ClusteringController::class, 'pendingClassifications'])->name('admin.clustering.pending-classifications');
     Route::get('clustering/{id}', [ClusteringController::class, 'show'])->name('admin.clustering.show');
-    Route::post('clustering/{id}/validate', [ClusteringController::class, 'validateSession'])->name('admin.clustering.validate');
-    Route::post('clustering/{id}/reject', [ClusteringController::class, 'reject'])->name('admin.clustering.reject');
     Route::get('clustering/{id}/pdf', [ClusteringController::class, 'downloadPdf'])->name('admin.clustering.pdf');
-    Route::post('clustering/{id}/activate-base-model', [ClusteringController::class, 'activateBaseModel'])->name('admin.clustering.activate-base-model');
+    Route::get('clustering/{id}/excel', [ClusteringController::class, 'downloadExcel'])->name('admin.clustering.excel');
     Route::post('clustering/classification/{id}/approve', [ClusteringController::class, 'approveClassification'])->name('admin.clustering.approve-classification');
     Route::post('clustering/classification/{id}/reject', [ClusteringController::class, 'rejectClassification'])->name('admin.clustering.reject-classification');
 });

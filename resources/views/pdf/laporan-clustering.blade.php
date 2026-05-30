@@ -240,8 +240,8 @@
         <table class="info-table">
             <tr>
                 <td class="label">Metode</td>
-                <td>K-Means Clustering</td>
-                <td class="label">Jumlah Cluster</td>
+                <td>Pengelompokan Otomatis</td>
+                <td class="label">Jumlah Kelompok</td>
                 <td>{{ $session->jumlah_cluster }} Kelompok</td>
             </tr>
             <tr>
@@ -423,27 +423,9 @@
         @endif
     @endforeach
 
-    {{-- Tanda Tangan --}}
-    <div class="signature-area">
-        <table>
-            <tr>
-                <td class="signature-box">
-                    <div class="jabatan">Mengetahui,<br>Kepala Desa</div>
-                    <div class="nama">{{ $session->validatedByUser->name ?? '.........................' }}</div>
-                    <div class="nip">NIP. ................................</div>
-                </td>
-                <td class="signature-box">
-                    <div class="tempat-tanggal">................, {{ now()->translatedFormat('d F Y') }}</div>
-                    <div class="jabatan">Dibuat Oleh,<br>Administrator</div>
-                    <div class="nama">{{ $session->user->name ?? '.........................' }}</div>
-                    <div class="nip">NIP. ................................</div>
-                </td>
-            </tr>
-        </table>
-    </div>
 
     <div class="footer">
-        Dokumen Resmi — Dihasilkan oleh Sistem Pengelompokan Warga K-Means &mdash; {{ now()->translatedFormat('d F Y') }} pukul {{ now()->format('H:i') }} WIB<br>
+        Dokumen Resmi — Dihasilkan oleh Sistem Data Warga Desa &mdash; {{ now()->translatedFormat('d F Y') }} pukul {{ now()->format('H:i') }} WIB<br>
         Dokumen ini bersifat rahasia dan hanya untuk keperluan internal pemerintah desa.
     </div>
 </body>

@@ -16,21 +16,17 @@ class ClusteringController extends Controller
     public function index()
     {
         $totalWarga = Warga::count();
+        $activeSession = ClusteringSession::getActiveBaseModel();
         $latestSession = ClusteringSession::with('centroids')->latest()->first();
-        return view('admin.clustering.index', compact('totalWarga', 'latestSession'));
+        return view('admin.clustering.index', compact('totalWarga', 'activeSession', 'latestSession'));
     }
 
     public function process(Request $request)
     {
-        $request->validate([
-            'jumlah_cluster' => 'required|integer|min:2|max:5',
-            'max_iterasi' => 'required|integer|min:10|max:500',
-        ]);
-
         try {
             $service = new KMeansService();
-            $session = $service->process($request->jumlah_cluster, $request->max_iterasi);
-            return redirect()->route('admin.clustering.show', $session->id)->with('success', 'Proses clustering berhasil! Session #' . $session->id);
+            $session = $service->process(3, 100);
+            return redirect()->route('admin.clustering.show', $session->id)->with('success', 'Pengelompokan warga berhasil! Acuan pengelompokan sudah aktif.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal: ' . $e->getMessage());
         }
@@ -44,67 +40,32 @@ class ClusteringController extends Controller
 
     public function show($id)
     {
-        $session = ClusteringSession::with(['centroids', 'user', 'validatedByUser', 'results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos'])->findOrFail($id);
+        $session = ClusteringSession::with(['centroids', 'user', 'results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos'])->findOrFail($id);
         return view('admin.clustering.show', compact('session'));
-    }
-
-    public function validateSession(Request $request, $id)
-    {
-        $session = ClusteringSession::findOrFail($id);
-        if ($session->status !== 'completed') {
-            return back()->with('error', 'Session ini tidak bisa divalidasi.');
-        }
-        $session->update([
-            'status' => 'validated',
-            'catatan_validasi' => $request->catatan_validasi,
-            'validated_by' => auth()->id(),
-            'validated_at' => now(),
-        ]);
-        return back()->with('success', 'Hasil clustering telah divalidasi.');
-    }
-
-    public function reject(Request $request, $id)
-    {
-        $request->validate(['catatan_validasi' => 'required']);
-        $session = ClusteringSession::findOrFail($id);
-        if ($session->status !== 'completed') {
-            return back()->with('error', 'Session ini tidak bisa ditolak.');
-        }
-        $session->update([
-            'status' => 'rejected',
-            'catatan_validasi' => $request->catatan_validasi,
-            'validated_by' => auth()->id(),
-            'validated_at' => now(),
-        ]);
-        return back()->with('success', 'Hasil clustering telah ditolak.');
     }
 
     public function downloadPdf($id)
     {
-        $session = ClusteringSession::with(['results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos', 'centroids', 'user', 'validatedByUser'])->findOrFail($id);
+        $session = ClusteringSession::with(['results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos', 'centroids', 'user'])->findOrFail($id);
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.laporan-clustering', ['session' => $session])
             ->setPaper('a4', 'portrait')
             ->setOption('margin-top', 20)
             ->setOption('margin-bottom', 20)
             ->setOption('margin-left', 20)
             ->setOption('margin-right', 20);
-        return response()->streamDownload(fn() => print($pdf->output()), "laporan-clustering-{$session->id}.pdf");
+        return response()->streamDownload(fn() => print($pdf->output()), "laporan-pengelompokan-{$session->id}.pdf");
     }
 
-    public function activateBaseModel($id)
+    public function downloadExcel($id)
     {
-        $session = ClusteringSession::findOrFail($id);
-        try {
-            $service = new KMeansService();
-            $service->activateAsBaseModel($session);
-            return back()->with('success', 'Session #' . $session->id . ' berhasil dijadikan Base Model aktif.');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        $session = ClusteringSession::with(['results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos'])->findOrFail($id);
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ClusteringExport($session), "laporan-pengelompokan-{$session->id}.xlsx");
     }
 
     public function pendingClassifications()
     {
+        abort_unless(auth()->user()->isKepalaDesa(), 403, 'Akses ditolak. Hanya Kepala Desa yang dapat mengakses halaman ini.');
+
         $pending = WargaClassificationQueue::with(['warga.pendidikan', 'warga.kondisiRumah', 'warga.bansos', 'baseModelSession'])
             ->where('status', 'pending')
             ->latest()
@@ -120,6 +81,8 @@ class ClusteringController extends Controller
 
     public function approveClassification($id)
     {
+        abort_unless(auth()->user()->isKepalaDesa(), 403, 'Akses ditolak. Hanya Kepala Desa yang dapat mengakses halaman ini.');
+
         $item = WargaClassificationQueue::findOrFail($id);
         $item->update([
             'status' => 'approved',
@@ -135,41 +98,39 @@ class ClusteringController extends Controller
             'jarak_ke_centroid' => $item->distance_to_centroid,
         ]);
 
-        return back()->with('success', 'Klasifikasi warga berhasil disetujui.');
+        return back()->with('success', 'Kelompok warga berhasil disetujui.');
     }
 
     public function rejectClassification(Request $request, $id)
     {
-        $request->validate(['rejection_reason' => 'required|string|max:500']);
+        abort_unless(auth()->user()->isKepalaDesa(), 403, 'Akses ditolak. Hanya Kepala Desa yang dapat mengakses halaman ini.');
+
+        $request->validate([
+            'revised_cluster' => 'required'
+        ]);
 
         $item = WargaClassificationQueue::findOrFail($id);
-        $updateData = [
-            'status' => 'rejected',
-            'reviewed_by' => auth()->id(),
-            'reviewed_at' => now(),
-            'rejection_reason' => $request->rejection_reason,
-        ];
+        $centroid = ClusterCentroid::where('session_id', $item->base_model_session_id)
+            ->where('cluster', $request->revised_cluster)->first();
 
-        if ($request->filled('revised_cluster')) {
-            $centroid = ClusterCentroid::where('session_id', $item->base_model_session_id)
-                ->where('cluster', $request->revised_cluster)->first();
-            if ($centroid) {
-                $updateData['revised_cluster'] = $request->revised_cluster;
-                $updateData['revised_label'] = $centroid->label;
-                $updateData['status'] = 'approved';
+        if ($centroid) {
+            $item->update([
+                'status' => 'approved',
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+                'revised_cluster' => $request->revised_cluster,
+                'revised_label' => $centroid->label,
+            ]);
 
-                ClusteringResult::create([
-                    'session_id' => $item->base_model_session_id,
-                    'warga_id' => $item->warga_id,
-                    'cluster' => $request->revised_cluster,
-                    'label' => $centroid->label,
-                    'jarak_ke_centroid' => $item->distance_to_centroid,
-                ]);
-            }
+            ClusteringResult::create([
+                'session_id' => $item->base_model_session_id,
+                'warga_id' => $item->warga_id,
+                'cluster' => $request->revised_cluster,
+                'label' => $centroid->label,
+                'jarak_ke_centroid' => $item->distance_to_centroid,
+            ]);
         }
 
-        $item->update($updateData);
-
-        return back()->with('success', 'Klasifikasi warga telah ditinjau.');
+        return back()->with('success', 'Data warga telah direvisi dan disetujui.');
     }
 }

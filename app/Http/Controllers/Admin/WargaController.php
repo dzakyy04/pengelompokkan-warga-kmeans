@@ -43,7 +43,7 @@ class WargaController extends Controller
             });
         }
 
-        $wargas = $query->orderBy('nama_lengkap')->get();
+        $wargas = $query->latest()->get();
 
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
@@ -56,6 +56,8 @@ class WargaController extends Controller
 
     public function create()
     {
+        abort_unless(auth()->user()->isAdmin(), 403, 'Akses ditolak.');
+
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
@@ -66,6 +68,8 @@ class WargaController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->isAdmin(), 403, 'Akses ditolak.');
+
         $request->validate([
             'nama_lengkap' => 'required|max:255',
             'nik' => 'required|min:16|max:16|unique:wargas,nik',
@@ -107,6 +111,8 @@ class WargaController extends Controller
 
     public function edit(Warga $warga)
     {
+        abort_unless(auth()->user()->isAdmin(), 403, 'Akses ditolak.');
+
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
@@ -117,6 +123,8 @@ class WargaController extends Controller
 
     public function update(Request $request, Warga $warga)
     {
+        abort_unless(auth()->user()->isAdmin(), 403, 'Akses ditolak.');
+
         $request->validate([
             'nama_lengkap' => 'required|max:255',
             'nik' => 'required|min:16|max:16|unique:wargas,nik,' . $warga->id,
@@ -163,13 +171,15 @@ class WargaController extends Controller
 
     public function destroy(Warga $warga)
     {
+        abort_unless(auth()->user()->isAdmin(), 403, 'Akses ditolak.');
+
         $warga->delete();
         return redirect()->route('admin.warga.index')->with('success', 'Data warga berhasil dihapus.');
     }
 
     private function getFilteredWarga(Request $request)
     {
-        $query = Warga::with(['pendidikan', 'kondisiRumah', 'bansos', 'latestClusteringResult']);
+        $query = Warga::with(['pendidikan', 'kondisiRumah', 'bansos', 'latestClusteringResult', 'latestClassification']);
 
         if ($request->filled('search')) {
             $s = $request->search;
@@ -192,14 +202,31 @@ class WargaController extends Controller
         if ($request->filled('bansos_id')) {
             $query->where('bansos_id', $request->bansos_id);
         }
-        if ($request->filled('tanggungan_min')) {
-            $query->where('jumlah_tanggungan', '>=', $request->tanggungan_min);
-        }
-        if ($request->filled('tanggungan_max')) {
-            $query->where('jumlah_tanggungan', '<=', $request->tanggungan_max);
+        if ($request->filled('tanggungan')) {
+            $query->where('jumlah_tanggungan', $request->tanggungan);
         }
 
-        return $query->orderBy('nama_lengkap')->get();
+        $wargas = $query->latest()->get();
+
+        return $wargas->sortBy(function($w) {
+            $kelompok = '';
+            if ($w->latestClusteringResult) {
+                $kelompok = $w->latestClusteringResult->label;
+            } elseif ($w->latestClassification && $w->latestClassification->status === 'approved') {
+                $kelompok = $w->latestClassification->assigned_label;
+            } else {
+                $kelompok = 'Z';
+            }
+            
+            $order = match($kelompok) {
+                'Rendah' => 1,
+                'Sedang' => 2,
+                'Tinggi' => 3,
+                default => 4,
+            };
+            
+            return $order . '_' . strtolower($w->nama_lengkap);
+        })->values();
     }
 
     public function exportPdf(Request $request)

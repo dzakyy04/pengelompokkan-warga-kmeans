@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistem pengelompokan warga berdasarkan kondisi ekonomi menggunakan algoritma K-Means Clustering untuk penyaluran bantuan sosial tepat sasaran.">
-    <title>Pengelompokan Warga — Sistem K-Means Clustering</title>
+    <meta name="description" content="Sistem pengelompokan warga berdasarkan kondisi ekonomi untuk penyaluran bantuan sosial tepat sasaran.">
+    <title>Pengelompokan Warga — Sistem Data Warga Desa</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -66,7 +66,7 @@
                     <div class="animate-fade-up">
                         <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 rounded-lg text-xs font-medium tracking-wide uppercase border border-emerald-200/60 dark:border-emerald-800/40">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-[subtlePulse_2s_ease-in-out_infinite]"></span>
-                            Algoritma K-Means
+                            Pengelompokan Otomatis
                         </span>
                     </div>
 
@@ -77,7 +77,7 @@
                     </h1>
 
                     <p class="mt-6 text-base md:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[52ch] animate-fade-up delay-200">
-                        Sistem berbasis K-Means yang mengelompokkan warga berdasarkan kondisi ekonomi, sehingga penyaluran bantuan sosial lebih akurat dan terukur.
+                        Sistem yang mengelompokkan warga berdasarkan kondisi ekonomi, sehingga penyaluran bantuan sosial lebih akurat dan terukur.
                     </p>
 
                     <div class="mt-8 flex flex-col sm:flex-row gap-3 animate-fade-up delay-300">
@@ -169,8 +169,8 @@
 
                         {{-- Floating badge --}}
                         <div class="absolute top-8 right-4 bg-white dark:bg-slate-900 border border-zinc-200 dark:border-slate-700 rounded-xl px-4 py-3 shadow-diffusion animate-float" style="animation-delay: 2s;">
-                            <p class="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-medium">Iterasi</p>
-                            <p class="text-lg font-bold text-zinc-900 dark:text-zinc-100 font-[JetBrains_Mono] tracking-tight">Konvergen</p>
+                            <p class="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-medium">Status</p>
+                            <p class="text-lg font-bold text-zinc-900 dark:text-zinc-100 font-[JetBrains_Mono] tracking-tight">Selesai</p>
                         </div>
                     </div>
                 </div>
@@ -205,9 +205,9 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
                                 </svg>
                             </div>
-                            <h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-3">K-Means Clustering</h3>
-                            <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[50ch]">
-                                Algoritma pengelompokan otomatis yang membagi warga ke dalam kelompok berdasarkan kesamaan karakteristik ekonomi. Sistem menghitung centroid secara iteratif hingga konvergen.
+                            <h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-3">Pengelompokan Otomatis</h3>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                                Sistem pengelompokan otomatis yang membagi warga ke dalam kelompok berdasarkan kesamaan karakteristik ekonomi untuk memastikan bantuan diterima oleh yang tepat sasaran.
                             </p>
                         </div>
                         <div class="lg:col-span-2 group rounded-2xl bg-zinc-50 dark:bg-slate-800/50 border border-zinc-100 dark:border-slate-800 p-8 lg:p-10 transition-all duration-300 hover:border-emerald-200 dark:hover:border-emerald-800/60">
@@ -272,7 +272,7 @@
                             </div>
                             <h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-3">Klasifikasi Otomatis</h3>
                             <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[50ch]">
-                                Warga baru yang ditambahkan akan otomatis diklasifikasikan berdasarkan model clustering yang sudah divalidasi. Tidak perlu menjalankan ulang proses K-Means secara manual.
+                                Warga baru yang ditambahkan akan otomatis dikelompokkan berdasarkan acuan yang sudah ada. Tidak perlu menjalankan ulang proses pengelompokan secara manual.
                             </p>
                         </div>
                     </div>
@@ -314,8 +314,8 @@
                         </div>
                         <div class="hidden lg:block flex-1 h-px bg-zinc-200 dark:bg-slate-800"></div>
                     </div>
-                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">Proses K-Means</h3>
-                    <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Sistem menjalankan algoritma K-Means secara iteratif untuk mengelompokkan data hingga mencapai konvergensi.</p>
+                    <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">Proses Pengelompokan</h3>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Sistem menjalankan proses pengelompokan secara otomatis untuk mengelompokkan data warga berdasarkan kesamaan kondisi ekonomi.</p>
                 </div>
 
                 {{-- Step 3 --}}
@@ -398,7 +398,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
                         </svg>
                     </div>
-                    <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Pengelompokan Warga K-Means</span>
+                    <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Sistem Data Warga Desa</span>
                 </div>
                 <p class="text-sm text-zinc-400 dark:text-zinc-500">&copy; {{ date('Y') }} Sistem Pengelompokan Warga</p>
             </div>

@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('admin.clustering.history') }}" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">&larr; Kembali ke Riwayat</a>
+    <a href="{{ route('admin.clustering.index') }}" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">&larr; Kembali</a>
 </div>
 
-{{-- Info + Status + Aksi --}}
+{{-- Info + Aksi --}}
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
         <h3 class="font-bold text-gray-900 dark:text-white mb-3">Informasi Proses</h3>
@@ -22,65 +22,37 @@
     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
         <h3 class="font-bold text-gray-900 dark:text-white mb-3">Status</h3>
         <div class="mb-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold {{ match($session->status) { 'validated' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', 'completed' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', 'rejected' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400', default => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' } }}">
-                {{ match($session->status) { 'validated' => '✓ Sudah Disetujui', 'completed' => '⏳ Menunggu Persetujuan', 'rejected' => '✗ Ditolak', default => 'Diproses' } }}
+            @if($session->is_base_model)
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                ✓ Acuan Pengelompokan Aktif
             </span>
-        @if($session->is_base_model)
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 ml-2">
-            🎯 Base Model Aktif
-        </span>
-        @endif
+            @else
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300">
+                Tidak Aktif
+            </span>
+            @endif
         </div>
-        @if($session->validatedByUser)
-        <div class="text-sm space-y-1 mt-3">
-            <p class="text-gray-500 dark:text-gray-400">Disetujui oleh: <span class="font-medium text-gray-900 dark:text-white">{{ $session->validatedByUser->name }}</span></p>
-            <p class="text-gray-500 dark:text-gray-400">Pada: <span class="font-medium text-gray-900 dark:text-white">{{ $session->validated_at?->format('d M Y, H:i') }}</span></p>
-        </div>
-        @endif
-        @if($session->catatan_validasi)
-        <div class="mt-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-sm text-gray-600 dark:text-gray-300"><strong>Catatan:</strong> {{ $session->catatan_validasi }}</div>
-        @endif
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            @if($session->is_base_model)
+                Warga baru yang ditambahkan akan otomatis terkelompokkan berdasarkan acuan ini.
+            @else
+                Acuan ini sudah digantikan oleh pengelompokan yang lebih baru.
+            @endif
+        </p>
     </div>
 
     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
-        <h3 class="font-bold text-gray-900 dark:text-white mb-3">Aksi</h3>
-        @if(auth()->user()->isKepalaDesa() && $session->status === 'completed')
-        <div class="space-y-3">
-            <form method="POST" action="{{ route('admin.clustering.validate', $session->id) }}">
-                @csrf
-                <textarea name="catatan_validasi" placeholder="Catatan (opsional)" rows="2" class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none mb-2 transition-colors"></textarea>
-                <button type="submit" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">
-                    ✓ Setujui Hasil
-                </button>
-            </form>
-            <form method="POST" action="{{ route('admin.clustering.reject', $session->id) }}">
-                @csrf
-                <textarea name="catatan_validasi" placeholder="Alasan penolakan (wajib diisi)" rows="2" required class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none mb-2 transition-colors"></textarea>
-                <button type="submit" class="w-full px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition">
-                    ✗ Tolak Hasil
-                </button>
-            </form>
+        <h3 class="font-bold text-gray-900 dark:text-white mb-3">Unduh Laporan</h3>
+        <div class="flex flex-col gap-2">
+            <a href="{{ route('admin.clustering.pdf', $session->id) }}" class="inline-flex items-center px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition w-full justify-center shadow-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Laporan PDF
+            </a>
+            <a href="{{ route('admin.clustering.excel', $session->id) }}" class="inline-flex items-center px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-xl transition w-full justify-center shadow-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Laporan Excel
+            </a>
         </div>
-        @elseif($session->status === 'validated')
-        <a href="{{ route('admin.clustering.pdf', $session->id) }}" class="inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition w-full justify-center">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            Download Laporan PDF
-        </a>
-        @if($session->status === 'validated' && !$session->is_base_model)
-        <form method="POST" action="{{ route('admin.clustering.activate-base-model', $session->id) }}" class="mt-3">
-            @csrf
-            <button type="submit" class="w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition" onclick="return confirm('Jadikan session ini sebagai Base Model aktif? Base model sebelumnya akan dinonaktifkan.')">
-                🎯 Jadikan Base Model Aktif
-            </button>
-        </form>
-        @elseif($session->is_base_model)
-        <div class="flex items-center gap-2 px-4 py-2.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-sm font-semibold rounded-xl mt-3">
-            ✓ Base Model Aktif Saat Ini
-        </div>
-        @endif
-        @else
-        <p class="text-sm text-gray-400">Tidak ada aksi yang tersedia saat ini.</p>
-        @endif
     </div>
 </div>
 
@@ -90,10 +62,10 @@
     @foreach($session->centroids->sortBy(fn($c) => match($c->label) { 'Rendah' => 0, 'Sedang' => 1, 'Tinggi' => 2, default => 3 }) as $c)
     @php
         $colors = match($c->label) {
-            'Rendah' => ['from-rose-500 to-rose-600', 'text-rose-100', 'bg-white/20'],
-            'Sedang' => ['from-amber-500 to-amber-600', 'text-amber-100', 'bg-white/20'],
-            'Tinggi' => ['from-teal-500 to-teal-600', 'text-teal-100', 'bg-white/20'],
-            default  => ['from-gray-500 to-gray-600', 'text-gray-100', 'bg-white/20'],
+            'Rendah' => ['from-rose-500 to-rose-600', 'text-rose-100'],
+            'Sedang' => ['from-amber-500 to-amber-600', 'text-amber-100'],
+            'Tinggi' => ['from-teal-500 to-teal-600', 'text-teal-100'],
+            default  => ['from-gray-500 to-gray-600', 'text-gray-100'],
         };
         $labelFriendly = match($c->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $c->label };
     @endphp

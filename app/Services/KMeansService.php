@@ -116,14 +116,20 @@ class KMeansService
             $i++;
         }
 
-        // 6. Save to database
+        // 6. Save to database & auto-activate as acuan
         return DB::transaction(function () use ($wargaClusterMap, $clusterCentroidData, $grouped, $labelMap, $numClusters, $maxIterations, $normalizationParams) {
+            // Nonaktifkan acuan lama
+            ClusteringSession::where('is_base_model', true)->update(['is_base_model' => false]);
+
             $session = ClusteringSession::create([
                 'user_id' => Auth::id(),
                 'jumlah_cluster' => $numClusters,
                 'max_iterasi' => $maxIterations,
-                'status' => 'completed',
+                'status' => 'validated',
+                'is_base_model' => true,
                 'normalization_params' => $normalizationParams,
+                'validated_by' => Auth::id(),
+                'validated_at' => now(),
             ]);
 
             foreach ($wargaClusterMap as $item) {
@@ -238,18 +244,4 @@ class KMeansService
         ]);
     }
 
-    public function activateAsBaseModel(ClusteringSession $session): void
-    {
-        if ($session->status !== 'validated') {
-            throw new \Exception('Hanya session yang sudah divalidasi yang bisa dijadikan base model.');
-        }
-        if (!$session->normalization_params) {
-            throw new \Exception('Session ini tidak memiliki parameter normalisasi. Silakan lakukan training ulang.');
-        }
-
-        DB::transaction(function () use ($session) {
-            ClusteringSession::where('is_base_model', true)->update(['is_base_model' => false]);
-            $session->update(['is_base_model' => true]);
-        });
-    }
 }

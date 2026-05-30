@@ -21,7 +21,7 @@
         <div class="text-sm text-blue-700 dark:text-blue-300">
             <strong>Cara penggunaan:</strong> Saat menambah data warga, pilih pekerjaan dari daftar preset — status produktivitas dan skor akan terisi otomatis.
             Jika pekerjaan tidak ada dalam daftar, pilih <em>"Lainnya"</em> dan tentukan status produktivitasnya secara manual.
-            Skor ini digunakan sebagai fitur clustering K-Means.
+            Skor ini digunakan sebagai fitur pengelompokan warga.
         </div>
     </div>
 </div>
