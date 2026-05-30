@@ -62,7 +62,7 @@
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Kondisi Rumah</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Bansos</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Tanggungan</th>
-                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Kelompok K-Means</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Kelompok</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Aksi</th>
             </tr></thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
@@ -125,7 +125,7 @@
                             </form>
                             {{-- Revise Toggle --}}
                             <button type="button" onclick="toggleRejectForm({{ $item->id }})" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition">
-                                ✎ Revisi Kelompok
+                                ✎ Revisi
                             </button>
                         </div>
                         {{-- Revise Form (hidden by default) --}}
