@@ -116,32 +116,18 @@ class KMeansService
             $i++;
         }
 
-        // 6. Save to database & auto-activate as acuan
-        return DB::transaction(function () use ($wargaClusterMap, $clusterCentroidData, $grouped, $labelMap, $numClusters, $maxIterations, $normalizationParams) {
-            // Nonaktifkan acuan lama
-            ClusteringSession::where('is_base_model', true)->update(['is_base_model' => false]);
-
+        // 6. Save to database — masuk antrian verifikasi kades (per data)
+        return DB::transaction(function () use ($wargaClusterMap, $clusterCentroidData, $grouped, $labelMap, $numClusters, $maxIterations, $normalizationParams, $normalized, $wargaList) {
             $session = ClusteringSession::create([
                 'user_id' => Auth::id(),
                 'jumlah_cluster' => $numClusters,
                 'max_iterasi' => $maxIterations,
-                'status' => 'validated',
-                'is_base_model' => true,
+                'status' => 'completed',
+                'is_base_model' => false,
                 'normalization_params' => $normalizationParams,
-                'validated_by' => Auth::id(),
-                'validated_at' => now(),
             ]);
 
-            foreach ($wargaClusterMap as $item) {
-                ClusteringResult::create([
-                    'session_id' => $session->id,
-                    'warga_id' => $item['warga_id'],
-                    'cluster' => $item['cluster'],
-                    'label' => $labelMap[$item['cluster']],
-                    'jarak_ke_centroid' => $item['distance'],
-                ]);
-            }
-
+            // Simpan centroid
             foreach ($clusterCentroidData as $ci => $centroid) {
                 ClusterCentroid::create([
                     'session_id' => $session->id,
@@ -153,6 +139,40 @@ class KMeansService
                     'centroid_kondisi_rumah' => $centroid[3] ?? 0,
                     'centroid_bansos' => $centroid[4] ?? 0,
                     'jumlah_anggota' => ($grouped[$ci] ?? collect())->count(),
+                ]);
+            }
+
+            // Masukkan semua hasil ke antrian verifikasi kades (per data)
+            foreach ($wargaClusterMap as $idx => $item) {
+                // Hitung distances ke semua centroid
+                $wargaIndex = null;
+                foreach ($wargaList as $wi => $w) {
+                    if ($w->id === $item['warga_id']) {
+                        $wargaIndex = $wi;
+                        break;
+                    }
+                }
+
+                $featureValues = $wargaIndex !== null ? ($normalized[$wargaIndex] ?? null) : null;
+
+                $distances = [];
+                foreach ($clusterCentroidData as $ci => $centroid) {
+                    $dist = $featureValues ? $this->euclideanDistance($featureValues, $centroid) : 0;
+                    $distances[$ci] = [
+                        'distance' => $dist,
+                        'label' => $labelMap[$ci],
+                    ];
+                }
+
+                WargaClassificationQueue::create([
+                    'warga_id' => $item['warga_id'],
+                    'base_model_session_id' => $session->id,
+                    'assigned_cluster' => $item['cluster'],
+                    'assigned_label' => $labelMap[$item['cluster']],
+                    'distance_to_centroid' => $item['distance'],
+                    'distances_to_all_centroids' => $distances,
+                    'feature_values' => $featureValues,
+                    'status' => 'pending',
                 ]);
             }
 

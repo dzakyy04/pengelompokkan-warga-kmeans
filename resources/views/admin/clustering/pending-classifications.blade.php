@@ -1,11 +1,11 @@
 @extends('admin.layout.app')
-@section('title', 'Validasi Warga Baru')
-@section('page-title', 'Validasi Warga Baru')
+@section('title', 'Verifikasi Data Warga')
+@section('page-title', 'Verifikasi Data Warga')
 
 @section('content')
 <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Verifikasi Warga Baru</h1>
-    <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Tinjau dan verifikasi kelompok ekonomi warga baru yang ditambahkan ke sistem</p>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Verifikasi Data Warga</h1>
+    <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Tinjau dan verifikasi kelompok ekonomi warga yang telah diproses oleh sistem</p>
 </div>
 
 {{-- Stat Cards --}}
@@ -35,8 +35,24 @@
     </div>
 </div>
 
+{{-- Pending Session Alert --}}
+@if(isset($pendingSession) && $pendingSession)
+<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-2xl p-4 mb-6">
+    <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="flex-1">
+            <p class="text-sm text-blue-700 dark:text-blue-300">
+                <strong>Pengelompokan batch baru</strong> telah diproses pada {{ $pendingSession->created_at->format('d M Y, H:i') }}.
+                Semua data warga perlu diverifikasi sebelum acuan pengelompokan diaktifkan.
+                Setelah semua data disetujui/direvisi, acuan akan otomatis aktif.
+            </p>
+        </div>
+    </div>
+</div>
+@endif
+
 {{-- No Active Alert --}}
-@if(!$baseModel)
+@if(!$baseModel && !(isset($pendingSession) && $pendingSession))
 <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-4 mb-6">
     <p class="text-sm text-amber-700 dark:text-amber-300">
         <strong>Belum ada acuan pengelompokan.</strong> Pengelompokan otomatis tidak dapat berjalan. Hubungi admin untuk menjalankan proses pengelompokan terlebih dahulu.
@@ -47,8 +63,24 @@
 {{-- Main Table --}}
 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200" style="max-width: 100%; overflow-x: auto;">
     <div class="p-6 border-b border-gray-200 dark:border-slate-700">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Daftar Warga Menunggu Verifikasi</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $totalPending }} warga baru menunggu verifikasi Anda</p>
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Daftar Warga Menunggu Verifikasi</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $totalPending }} warga menunggu verifikasi Anda</p>
+            </div>
+            @if($totalPending > 0)
+            <form method="POST" action="{{ route('admin.clustering.approve-all-classifications') }}" class="flex-shrink-0">
+                @csrf
+                @if(isset($pendingSession) && $pendingSession)
+                <input type="hidden" name="session_id" value="{{ $pendingSession->id }}">
+                @endif
+                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm" onclick="return confirm('Apakah Anda yakin ingin menyetujui SEMUA {{ $totalPending }} data warga sekaligus?')">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Setujui Semua ({{ $totalPending }})
+                </button>
+            </form>
+            @endif
+        </div>
     </div>
 
     @if($pending->count() > 0)
@@ -132,11 +164,15 @@
                         <div id="reject-form-{{ $item->id }}" class="hidden mt-3 text-left">
                             <form method="POST" action="{{ route('admin.clustering.reject-classification', $item->id) }}">
                                 @csrf
-                                @if($baseModel && $baseModel->centroids->count() > 0)
+                                @php
+                                    $itemSession = $item->baseModelSession;
+                                    $itemCentroids = $itemSession ? $itemSession->centroids : collect();
+                                @endphp
+                                @if($itemCentroids->count() > 0)
                                 <div class="mb-2">
                                     <select name="revised_cluster" required class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-colors">
                                         <option value="" disabled selected>— Pilih Kelompok Baru —</option>
-                                        @foreach($baseModel->centroids->sortBy('cluster') as $centroid)
+                                        @foreach($itemCentroids->sortBy('cluster') as $centroid)
                                         @php
                                             $centroidLabel = match($centroid->label) {
                                                 'Rendah' => 'Ekonomi Rendah',

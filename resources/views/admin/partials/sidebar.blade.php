@@ -94,7 +94,7 @@
             <svg class="w-5 h-5 mr-3 flex-shrink-0 {{ request()->routeIs('admin.clustering.pending-classifications') ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span class="text-sm sidebar-text">Verifikasi Warga Baru</span>
+            <span class="text-sm sidebar-text">Verifikasi Data</span>
             @if($pendingValidationCount > 0)
             <span class="ml-auto bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full sidebar-text">{{ $pendingValidationCount }}</span>
             @endif

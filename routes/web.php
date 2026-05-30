@@ -53,6 +53,7 @@ Route::prefix('admin')->middleware(['web', \App\Http\Middleware\AdminMiddleware:
     Route::get('clustering/{id}', [ClusteringController::class, 'show'])->name('admin.clustering.show');
     Route::get('clustering/{id}/pdf', [ClusteringController::class, 'downloadPdf'])->name('admin.clustering.pdf');
     Route::get('clustering/{id}/excel', [ClusteringController::class, 'downloadExcel'])->name('admin.clustering.excel');
+    Route::post('clustering/classification/approve-all', [ClusteringController::class, 'approveAllClassifications'])->name('admin.clustering.approve-all-classifications');
     Route::post('clustering/classification/{id}/approve', [ClusteringController::class, 'approveClassification'])->name('admin.clustering.approve-classification');
     Route::post('clustering/classification/{id}/reject', [ClusteringController::class, 'rejectClassification'])->name('admin.clustering.reject-classification');
 });

@@ -54,7 +54,7 @@
         </div>
         <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl p-4 mb-4">
             <p class="text-sm text-amber-700 dark:text-amber-300">
-                <strong>Perhatian:</strong> Proses ulang akan mengganti acuan pengelompokan saat ini. Semua warga akan dikelompokkan ulang berdasarkan data terbaru.
+                <strong>Perhatian:</strong> Proses ulang akan menghasilkan pengelompokan baru yang perlu diverifikasi oleh Kepala Desa sebelum diaktifkan sebagai acuan.
             </p>
         </div>
         <form method="POST" action="{{ route('admin.clustering.process') }}">
@@ -68,7 +68,37 @@
     </div>
 
     @else
-    {{-- Belum ada acuan — tampilkan form pertama kali --}}
+    {{-- Belum ada acuan — tampilkan form pertama kali atau status menunggu verifikasi --}}
+    @if(isset($pendingVerificationSession) && $pendingVerificationSession)
+    {{-- Ada session yang menunggu verifikasi kades --}}
+    <div class="max-w-3xl">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-amber-200 dark:border-amber-800/50 p-6 mb-6 transition-colors duration-200">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900 dark:text-white">Menunggu Verifikasi Kepala Desa</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Diproses pada {{ $pendingVerificationSession->created_at->format('d M Y, H:i') }}</p>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl p-4 mb-4">
+                <p class="text-sm text-amber-700 dark:text-amber-300">
+                    Pengelompokan telah selesai diproses. <strong>{{ $pendingVerificationCount }} data warga</strong> menunggu verifikasi oleh Kepala Desa sebelum acuan pengelompokan diaktifkan.
+                </p>
+            </div>
+
+            @if(auth()->user()->isKepalaDesa())
+            <a href="{{ route('admin.clustering.pending-classifications') }}" class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+                Verifikasi {{ $pendingVerificationCount }} Data Warga
+            </a>
+            @else
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-2">Menunggu Kepala Desa memverifikasi data...</p>
+            @endif
+        </div>
+    </div>
+    @else
     <div class="max-w-3xl">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 mb-6 transition-colors duration-200">
         <div class="flex items-center gap-3 mb-4">
@@ -83,7 +113,7 @@
 
         <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 mb-4">
             <p class="text-sm text-blue-700 dark:text-blue-300">
-                <strong class="dark:text-blue-200">Cara kerja:</strong> Sistem akan mengelompokkan warga secara otomatis berdasarkan pekerjaan, jumlah tanggungan, pendidikan kepala keluarga, kondisi rumah, dan bantuan sosial yang diterima. Hasilnya akan langsung menjadi acuan untuk mengelompokkan warga baru yang ditambahkan di kemudian hari.
+                <strong class="dark:text-blue-200">Cara kerja:</strong> Sistem akan mengelompokkan warga secara otomatis berdasarkan pekerjaan, jumlah tanggungan, pendidikan kepala keluarga, kondisi rumah, dan bantuan sosial yang diterima. Hasilnya perlu diverifikasi oleh Kepala Desa (per data) sebelum diaktifkan sebagai acuan pengelompokan.
             </p>
         </div>
 
@@ -95,6 +125,7 @@
         </form>
         </div>
     </div>
+    @endif
     @endif
 </div>
 @endsection
