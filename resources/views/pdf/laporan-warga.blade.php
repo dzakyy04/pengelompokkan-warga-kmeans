@@ -232,10 +232,11 @@
                 <th>NIK</th>
                 <th>Nama Lengkap</th>
                 <th>Pendidikan KK</th>
+                <th>Pekerjaan</th>
+                <th>Status Produktivitas</th>
+                <th>Tanggungan</th>
                 <th>Kondisi Rumah</th>
                 <th>Bansos</th>
-                <th>Pendapatan</th>
-                <th>Tanggungan</th>
                 <th>Kelompok</th>
             </tr>
         </thead>
@@ -246,10 +247,11 @@
                 <td>{{ $w->nik }}</td>
                 <td>{{ $w->nama_lengkap }}</td>
                 <td>{{ $w->pendidikan->nama ?? '-' }}</td>
+                <td>{{ $w->pekerjaan ?? '-' }}</td>
+                <td>{{ $w->status_produktivitas ?? '-' }}</td>
+                <td class="text-center">{{ $w->jumlah_tanggungan }}</td>
                 <td>{{ $w->kondisiRumah->nama ?? '-' }}</td>
                 <td>{{ $w->bansos->nama ?? '-' }}</td>
-                <td class="text-right">Rp {{ number_format($w->pendapatan, 0, ',', '.') }}</td>
-                <td class="text-center">{{ $w->jumlah_tanggungan }}</td>
                 <td class="text-center">
                     @if($w->latestClusteringResult)
                     <span class="badge badge-{{ strtolower($w->latestClusteringResult->label) }}">

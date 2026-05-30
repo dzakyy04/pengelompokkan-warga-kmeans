@@ -22,12 +22,12 @@ class KMeansService
         }
 
         // 1. Build raw feature matrix
-        // Fitur: pendapatan, tanggungan, pendidikan kepala keluarga (skor), kondisi rumah (skor), bansos (skor)
+        // Fitur: skor_produktivitas_pekerjaan, tanggungan, pendidikan kepala keluarga (skor), kondisi rumah (skor), bansos (skor)
         $rawSamples = [];
         $wargaList = [];
         foreach ($wargas as $warga) {
             $rawSamples[] = [
-                (float) $warga->pendapatan,
+                (float) ($warga->skor_produktivitas ?? 1),
                 (float) $warga->jumlah_tanggungan,
                 (float) ($warga->pendidikan->skor ?? 0),
                 (float) ($warga->kondisiRumah->skor ?? 0),
@@ -99,12 +99,12 @@ class KMeansService
             }
         }
 
-        // 5. Auto-label clusters by average pendapatan (Rendah < Sedang < Tinggi)
+        // 5. Auto-label clusters by average skor_produktivitas (Rendah < Sedang < Tinggi)
         $grouped = collect($wargaClusterMap)->groupBy('cluster');
         $clusterAvg = [];
         foreach ($grouped as $ci => $members) {
             $ids = $members->pluck('warga_id');
-            $clusterAvg[$ci] = $wargas->whereIn('id', $ids)->avg('pendapatan');
+            $clusterAvg[$ci] = $wargas->whereIn('id', $ids)->avg('skor_produktivitas');
         }
         asort($clusterAvg);
 
@@ -141,7 +141,7 @@ class KMeansService
                     'session_id' => $session->id,
                     'cluster' => $ci,
                     'label' => $labelMap[$ci],
-                    'centroid_pendapatan' => $centroid[0] ?? 0,
+                    'centroid_pekerjaan' => $centroid[0] ?? 0,
                     'centroid_tanggungan' => $centroid[1] ?? 0,
                     'centroid_pendidikan' => $centroid[2] ?? 0,
                     'centroid_kondisi_rumah' => $centroid[3] ?? 0,
@@ -191,7 +191,7 @@ class KMeansService
 
         $warga->load(['pendidikan', 'kondisiRumah', 'bansos']);
         $rawFeatures = [
-            (float) $warga->pendapatan,
+            (float) ($warga->skor_produktivitas ?? 1),
             (float) $warga->jumlah_tanggungan,
             (float) ($warga->pendidikan->skor ?? 0),
             (float) ($warga->kondisiRumah->skor ?? 0),
@@ -211,7 +211,7 @@ class KMeansService
         $distances = [];
         foreach ($centroids as $centroid) {
             $centroidValues = [
-                (float) $centroid->centroid_pendapatan,
+                (float) $centroid->centroid_pekerjaan,
                 (float) $centroid->centroid_tanggungan,
                 (float) $centroid->centroid_pendidikan,
                 (float) $centroid->centroid_kondisi_rumah,

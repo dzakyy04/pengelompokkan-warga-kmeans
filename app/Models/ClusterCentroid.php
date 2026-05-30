@@ -5,9 +5,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClusterCentroid extends Model
 {
-    protected $fillable = ['session_id', 'cluster', 'label', 'centroid_pendapatan', 'centroid_tanggungan', 'centroid_pendidikan', 'centroid_kondisi_rumah', 'centroid_bansos', 'jumlah_anggota'];
+    protected $fillable = ['session_id', 'cluster', 'label', 'centroid_pekerjaan', 'centroid_tanggungan', 'centroid_pendidikan', 'centroid_kondisi_rumah', 'centroid_bansos', 'jumlah_anggota'];
     protected $casts = [
-        'centroid_pendapatan' => 'decimal:6',
+        'centroid_pekerjaan' => 'decimal:6',
         'centroid_tanggungan' => 'decimal:6',
         'centroid_pendidikan' => 'decimal:6',
         'centroid_kondisi_rumah' => 'decimal:6',

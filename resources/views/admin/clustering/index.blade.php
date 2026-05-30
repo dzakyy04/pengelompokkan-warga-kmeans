@@ -22,7 +22,7 @@
 
         <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 mb-4">
             <p class="text-sm text-blue-700 dark:text-blue-300">
-                <strong class="dark:text-blue-200">Cara kerja:</strong> Sistem akan mengelompokkan warga secara otomatis berdasarkan pendapatan, jumlah tanggungan, pendidikan kepala keluarga, kondisi rumah, dan jumlah bansos yang diterima.
+                <strong class="dark:text-blue-200">Cara kerja:</strong> Sistem akan mengelompokkan warga secara otomatis berdasarkan pekerjaan (skor produktivitas), jumlah tanggungan, pendidikan kepala keluarga, kondisi rumah, dan jumlah bansos yang diterima.
             </p>
         </div>
 

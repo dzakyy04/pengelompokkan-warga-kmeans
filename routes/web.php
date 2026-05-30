@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MasterBansosController;
 use App\Http\Controllers\Admin\MasterKondisiRumahController;
 use App\Http\Controllers\Admin\MasterPendidikanController;
+use App\Http\Controllers\Admin\MasterStatusProduktivitasController;
 use App\Http\Controllers\Admin\WargaController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,7 @@ Route::prefix('admin')->middleware(['web', \App\Http\Middleware\AdminMiddleware:
     Route::resource('master-pendidikan', MasterPendidikanController::class)->names('admin.master-pendidikan')->except(['create', 'edit', 'show']);
     Route::resource('master-kondisi-rumah', MasterKondisiRumahController::class)->names('admin.master-kondisi-rumah');
     Route::resource('master-bansos', MasterBansosController::class)->names('admin.master-bansos')->except(['create', 'edit', 'show']);
+    Route::get('master-status-produktivitas', [MasterStatusProduktivitasController::class, 'index'])->name('admin.master-status-produktivitas.index');
 
     // Clustering
     Route::get('clustering', [ClusteringController::class, 'index'])->name('admin.clustering.index');

@@ -94,7 +94,7 @@
     <div class="col-span-12 lg:col-span-8">
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-full transition-colors duration-200">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Rata-rata Pendapatan per Kelompok</h2>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Distribusi Status Produktivitas per Kelompok</h2>
                 <span class="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold rounded-xl">{{ $totalWarga }} Warga</span>
             </div>
             <div class="h-64"><canvas id="incomeBar"></canvas></div>
@@ -170,8 +170,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const barChart = new Chart(document.getElementById('incomeBar').getContext('2d'), {
         type: 'bar',
-        data: { labels: ['Ekonomi Rendah','Ekonomi Menengah','Ekonomi Mampu'], datasets: [{ label: 'Rata-rata Pendapatan', data: [{{ $avgIncomePerCluster['Rendah'] }}, {{ $avgIncomePerCluster['Sedang'] }}, {{ $avgIncomePerCluster['Tinggi'] }}], backgroundColor: ['rgba(244,63,94,0.8)','rgba(245,158,11,0.8)','rgba(20,184,166,0.8)'], borderColor: ['rgb(244,63,94)','rgb(245,158,11)','rgb(20,184,166)'], borderWidth: 2, borderRadius: 12, borderSkipped: false }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, displayColors: false, callbacks: { label: ctx => 'Rp ' + ctx.raw.toLocaleString('id-ID') } } }, scales: { y: { beginAtZero: true, ticks: { color: theme.textColor, font: { size: 10 }, callback: v => 'Rp ' + (v/1000000).toFixed(1) + 'jt' }, grid: { color: theme.gridColor } }, x: { ticks: { color: theme.textColor, font: { size: 11, weight: '600' } }, grid: { display: false } } } }
+        data: {
+            labels: ['Ekonomi Rendah', 'Ekonomi Menengah', 'Ekonomi Mampu'],
+            datasets: [
+                {
+                    label: 'Stabil',
+                    data: [{{ $statusPerCluster['Rendah']['Stabil'] }}, {{ $statusPerCluster['Sedang']['Stabil'] }}, {{ $statusPerCluster['Tinggi']['Stabil'] }}],
+                    backgroundColor: 'rgba(20,184,166,0.8)',
+                    borderColor: 'rgb(20,184,166)',
+                    borderWidth: 1, borderRadius: 4, borderSkipped: false,
+                },
+                {
+                    label: 'Cukup Stabil',
+                    data: [{{ $statusPerCluster['Rendah']['Cukup Stabil'] }}, {{ $statusPerCluster['Sedang']['Cukup Stabil'] }}, {{ $statusPerCluster['Tinggi']['Cukup Stabil'] }}],
+                    backgroundColor: 'rgba(59,130,246,0.8)',
+                    borderColor: 'rgb(59,130,246)',
+                    borderWidth: 1, borderRadius: 4, borderSkipped: false,
+                },
+                {
+                    label: 'Tidak Stabil',
+                    data: [{{ $statusPerCluster['Rendah']['Tidak Stabil'] }}, {{ $statusPerCluster['Sedang']['Tidak Stabil'] }}, {{ $statusPerCluster['Tinggi']['Tidak Stabil'] }}],
+                    backgroundColor: 'rgba(245,158,11,0.8)',
+                    borderColor: 'rgb(245,158,11)',
+                    borderWidth: 1, borderRadius: 4, borderSkipped: false,
+                },
+                {
+                    label: 'Tidak Produktif',
+                    data: [{{ $statusPerCluster['Rendah']['Tidak Produktif'] }}, {{ $statusPerCluster['Sedang']['Tidak Produktif'] }}, {{ $statusPerCluster['Tinggi']['Tidak Produktif'] }}],
+                    backgroundColor: 'rgba(244,63,94,0.8)',
+                    borderColor: 'rgb(244,63,94)',
+                    borderWidth: 1, borderRadius: 4, borderSkipped: false,
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: theme.textColor, font: { size: 11 }, usePointStyle: true, pointStyle: 'circle', padding: 12 } },
+                tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + ' orang' } }
+            },
+            scales: {
+                x: { stacked: true, ticks: { color: theme.textColor, font: { size: 11, weight: '600' } }, grid: { display: false } },
+                y: { stacked: true, beginAtZero: true, ticks: { color: theme.textColor, font: { size: 10 }, stepSize: 1 }, grid: { color: theme.gridColor } }
+            }
+        }
     });
 
     // Listen for theme changes to dynamically update chart colors

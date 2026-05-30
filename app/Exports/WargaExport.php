@@ -34,7 +34,7 @@ class WargaExport implements FromCollection, WithHeadings, WithMapping, WithStyl
 
     public function headings(): array
     {
-        return ['No', 'NIK', 'Nama Lengkap', 'Pendidikan KK', 'Kondisi Rumah', 'Bansos', 'Pendapatan', 'Tanggungan', 'Kelompok'];
+        return ['No', 'NIK', 'Nama Lengkap', 'Pendidikan KK', 'Pekerjaan', 'Status Produktivitas', 'Tanggungan', 'Kondisi Rumah', 'Bansos', 'Kelompok'];
     }
 
     public function map($warga): array
@@ -56,10 +56,11 @@ class WargaExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             "'" . $warga->nik,
             $warga->nama_lengkap,
             $warga->pendidikan->nama ?? '-',
+            $warga->pekerjaan ?? '-',
+            $warga->status_produktivitas ?? '-',
+            $warga->jumlah_tanggungan,
             $warga->kondisiRumah->nama ?? '-',
             $warga->bansos->nama ?? '-',
-            $warga->pendapatan,
-            $warga->jumlah_tanggungan,
             $kelompok,
         ];
     }
@@ -82,11 +83,12 @@ class WargaExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             'B' => 20,
             'C' => 25,
             'D' => 15,
-            'E' => 15,
+            'E' => 18,
             'F' => 18,
-            'G' => 15,
-            'H' => 12,
+            'G' => 12,
+            'H' => 15,
             'I' => 18,
+            'J' => 18,
         ];
     }
 

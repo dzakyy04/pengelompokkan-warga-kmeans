@@ -280,9 +280,9 @@
             <tbody>
                 <tr>
                     <td class="text-center">1</td>
-                    <td>Pendapatan</td>
-                    <td>Pendapatan rata-rata per bulan</td>
-                    <td>Rupiah (dinormalisasi 0–1)</td>
+                    <td>Pekerjaan (Skor Produktivitas)</td>
+                    <td>Status produktivitas pekerjaan kepala keluarga</td>
+                    <td>Skor 1–4 (dinormalisasi 0–1)</td>
                 </tr>
                 <tr>
                     <td class="text-center">2</td>
@@ -321,7 +321,7 @@
                 <tr>
                     <th>Cluster</th>
                     <th>Jumlah Anggota</th>
-                    <th>Pendapatan</th>
+                    <th>Pekerjaan</th>
                     <th>Tanggungan</th>
                     <th>Pendidikan</th>
                     <th>Kondisi Rumah</th>
@@ -333,7 +333,7 @@
             <tr class="cluster-{{ strtolower($c->label) }}">
                 <td><span class="badge badge-{{ strtolower($c->label) }}">{{ match($c->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $c->label } }}</span></td>
                 <td class="text-center">{{ $c->jumlah_anggota }} orang</td>
-                <td class="text-right">{{ number_format($c->centroid_pendapatan, 4) }}</td>
+                <td class="text-right">{{ number_format($c->centroid_pekerjaan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_tanggungan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_pendidikan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_kondisi_rumah, 4) }}</td>
@@ -395,7 +395,8 @@
                         <th>NIK</th>
                         <th>Nama Lengkap</th>
                         <th>Pendidikan KK</th>
-                        <th>Pendapatan</th>
+                        <th>Pekerjaan</th>
+                        <th>Status Produktivitas</th>
                         <th>Tanggungan</th>
                         <th>Kondisi Rumah</th>
                         <th>Bansos</th>
@@ -408,7 +409,8 @@
                     <td>{{ $r->warga->nik }}</td>
                     <td>{{ $r->warga->nama_lengkap }}</td>
                     <td>{{ $r->warga->pendidikan->nama ?? '-' }}</td>
-                    <td class="text-right">Rp {{ number_format($r->warga->pendapatan, 0, ',', '.') }}</td>
+                    <td>{{ $r->warga->pekerjaan ?? '-' }}</td>
+                    <td>{{ $r->warga->status_produktivitas ?? '-' }}</td>
                     <td class="text-center">{{ $r->warga->jumlah_tanggungan }}</td>
                     <td>{{ $r->warga->kondisiRumah->nama ?? '-' }}</td>
                     <td>{{ $r->warga->bansos->nama ?? '-' }}</td>

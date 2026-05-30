@@ -124,10 +124,11 @@
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">NIK</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Nama</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pendidikan KK</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pekerjaan</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Status Produktivitas</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Tanggungan</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Kondisi Rumah</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Bansos</th>
-                <th class="px-4 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pendapatan</th>
-                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Tanggungan</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Kelompok</th>
             </tr></thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
@@ -137,10 +138,26 @@
                     <td class="px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400">{{ $r->warga->nik ?? '-' }}</td>
                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $r->warga->nama_lengkap ?? '-' }}</td>
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->pendidikan->nama ?? '-' }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->pekerjaan ?? '-' }}</td>
+                    <td class="px-4 py-3">
+                        @php
+                            $spBadge = match($r->warga->status_produktivitas ?? '') {
+                                'Stabil'          => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+                                'Cukup Stabil'    => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                'Tidak Stabil'    => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                                'Tidak Produktif' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+                                default           => 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-gray-400',
+                            };
+                        @endphp
+                        @if($r->warga->status_produktivitas)
+                        <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold {{ $spBadge }}">{{ $r->warga->status_produktivitas }}</span>
+                        @else
+                        <span class="text-gray-400 text-xs">-</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{{ $r->warga->jumlah_tanggungan ?? 0 }}</td>
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->kondisiRumah->nama ?? '-' }}</td>
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->bansos->nama ?? '-' }}</td>
-                    <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">Rp {{ number_format($r->warga->pendapatan ?? 0, 0, ',', '.') }}</td>
-                    <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{{ $r->warga->jumlah_tanggungan ?? 0 }}</td>
                     <td class="px-4 py-3 text-center">
                         <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($r->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">
                             {{ match($r->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $r->label } }}
@@ -167,7 +184,7 @@ $(document).ready(function() {
             paginate: { first: "«", last: "»", next: "›", previous: "‹" }
         },
         pageLength: 15,
-        order: [[8, 'asc']],
+        order: [[9, 'asc']],
     });
 });
 </script>

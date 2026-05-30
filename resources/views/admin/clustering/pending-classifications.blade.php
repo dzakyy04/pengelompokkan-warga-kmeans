@@ -70,7 +70,8 @@
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">No</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Nama Warga</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">NIK</th>
-                <th class="px-4 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pendapatan</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pekerjaan</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Status Produktivitas</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Tanggungan</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Kelompok Otomatis</th>
                 <th class="px-4 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Jarak</th>
@@ -97,7 +98,23 @@
                     <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $loop->iteration }}</td>
                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $item->warga->nama_lengkap ?? '-' }}</td>
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $item->warga->nik ?? '-' }}</td>
-                    <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">Rp {{ number_format($item->warga->pendapatan ?? 0, 0, ',', '.') }}</td>
+                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $item->warga->pekerjaan ?? '-' }}</td>
+                    <td class="px-4 py-3">
+                        @php
+                            $spbClass = match($item->warga->status_produktivitas ?? '') {
+                                'Stabil'          => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+                                'Cukup Stabil'    => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                'Tidak Stabil'    => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                                'Tidak Produktif' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+                                default           => 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-gray-400',
+                            };
+                        @endphp
+                        @if($item->warga->status_produktivitas)
+                        <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold {{ $spbClass }}">{{ $item->warga->status_produktivitas }}</span>
+                        @else
+                        <span class="text-gray-400 text-xs">-</span>
+                        @endif
+                    </td>
                     <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{{ $item->warga->jumlah_tanggungan ?? '-' }}</td>
                     <td class="px-4 py-3 text-center">
                         <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ $badgeClass }}">
@@ -194,7 +211,7 @@ $(document).ready(function() {
         pageLength: 10,
         order: [[0, 'asc']],
         columnDefs: [
-            { orderable: false, targets: [7] }
+            { orderable: false, targets: [8] }
         ]
     });
 });

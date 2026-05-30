@@ -25,20 +25,11 @@ class WargaController extends Controller
                 $q->where('label', $request->kelompok);
             });
         }
-        if ($request->filled('pendidikan_id')) {
-            $query->where('pendidikan_id', $request->pendidikan_id);
+        if ($request->filled('pekerjaan')) {
+            $query->where('pekerjaan', $request->pekerjaan);
         }
-        if ($request->filled('kondisi_rumah_id')) {
-            $query->where('kondisi_rumah_id', $request->kondisi_rumah_id);
-        }
-        if ($request->filled('bansos_id')) {
-            $query->where('bansos_id', $request->bansos_id);
-        }
-        if ($request->filled('pendapatan_min')) {
-            $query->where('pendapatan', '>=', str_replace('.', '', $request->pendapatan_min));
-        }
-        if ($request->filled('pendapatan_max')) {
-            $query->where('pendapatan', '<=', str_replace('.', '', $request->pendapatan_max));
+        if ($request->filled('status_produktivitas')) {
+            $query->where('status_produktivitas', $request->status_produktivitas);
         }
         if ($request->filled('tanggungan_min')) {
             $query->where('jumlah_tanggungan', '>=', $request->tanggungan_min);
@@ -57,8 +48,10 @@ class WargaController extends Controller
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
+        $presetPekerjaan = \App\Models\Warga::presetPekerjaan();
+        $statusProduktivitas = \App\Models\Warga::statusProduktivitas();
 
-        return view('admin.warga.index', compact('wargas', 'pendidikans', 'kondisiRumahs', 'bansos'));
+        return view('admin.warga.index', compact('wargas', 'pendidikans', 'kondisiRumahs', 'bansos', 'presetPekerjaan', 'statusProduktivitas'));
     }
 
     public function create()
@@ -66,26 +59,26 @@ class WargaController extends Controller
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
-        return view('admin.warga.create', compact('pendidikans', 'kondisiRumahs', 'bansos'));
+        $presetPekerjaan = \App\Models\Warga::presetPekerjaan();
+        $statusProduktivitas = \App\Models\Warga::statusProduktivitas();
+        return view('admin.warga.create', compact('pendidikans', 'kondisiRumahs', 'bansos', 'presetPekerjaan', 'statusProduktivitas'));
     }
 
     public function store(Request $request)
     {
-        if ($request->has('pendapatan')) {
-            $request->merge(['pendapatan' => str_replace('.', '', $request->pendapatan)]);
-        }
         $request->validate([
             'nama_lengkap' => 'required|max:255',
             'nik' => 'required|min:16|max:16|unique:wargas,nik',
             'pendidikan_id' => 'required|exists:master_pendidikan,id',
-            'pendapatan' => 'required|numeric|min:0',
+            'pekerjaan' => 'required|string|max:255',
+            'status_produktivitas' => 'required|string|max:100',
+            'skor_produktivitas' => 'required|integer|min:1|max:4',
             'jumlah_tanggungan' => 'required|integer|min:0|max:20',
             'kondisi_rumah_id' => 'required|exists:master_kondisi_rumah,id',
             'bansos_id' => 'required|exists:master_bansos,id',
         ]);
 
-        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pendapatan', 'jumlah_tanggungan', 'kondisi_rumah_id', 'bansos_id');
-        $data['pendapatan'] = (int) str_replace('.', '', $data['pendapatan']);
+        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pekerjaan', 'status_produktivitas', 'skor_produktivitas', 'jumlah_tanggungan', 'kondisi_rumah_id', 'bansos_id');
 
         $warga = Warga::create($data);
 
@@ -117,26 +110,26 @@ class WargaController extends Controller
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
-        return view('admin.warga.edit', compact('warga', 'pendidikans', 'kondisiRumahs', 'bansos'));
+        $presetPekerjaan = \App\Models\Warga::presetPekerjaan();
+        $statusProduktivitas = \App\Models\Warga::statusProduktivitas();
+        return view('admin.warga.edit', compact('warga', 'pendidikans', 'kondisiRumahs', 'bansos', 'presetPekerjaan', 'statusProduktivitas'));
     }
 
     public function update(Request $request, Warga $warga)
     {
-        if ($request->has('pendapatan')) {
-            $request->merge(['pendapatan' => str_replace('.', '', $request->pendapatan)]);
-        }
         $request->validate([
             'nama_lengkap' => 'required|max:255',
             'nik' => 'required|min:16|max:16|unique:wargas,nik,' . $warga->id,
             'pendidikan_id' => 'required|exists:master_pendidikan,id',
-            'pendapatan' => 'required|numeric|min:0',
+            'pekerjaan' => 'required|string|max:255',
+            'status_produktivitas' => 'required|string|max:100',
+            'skor_produktivitas' => 'required|integer|min:1|max:4',
             'jumlah_tanggungan' => 'required|integer|min:0|max:20',
             'kondisi_rumah_id' => 'required|exists:master_kondisi_rumah,id',
             'bansos_id' => 'required|exists:master_bansos,id',
         ]);
 
-        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pendapatan', 'jumlah_tanggungan', 'kondisi_rumah_id', 'bansos_id');
-        $data['pendapatan'] = (int) str_replace('.', '', $data['pendapatan']);
+        $data = $request->only('nama_lengkap', 'nik', 'rt_rw', 'pendidikan_id', 'pekerjaan', 'status_produktivitas', 'skor_produktivitas', 'jumlah_tanggungan', 'kondisi_rumah_id', 'bansos_id');
 
         $warga->update($data);
 
@@ -187,8 +180,11 @@ class WargaController extends Controller
                 $q->where('label', $request->kelompok);
             });
         }
-        if ($request->filled('pendidikan_id')) {
-            $query->where('pendidikan_id', $request->pendidikan_id);
+        if ($request->filled('pekerjaan')) {
+            $query->where('pekerjaan', $request->pekerjaan);
+        }
+        if ($request->filled('status_produktivitas')) {
+            $query->where('status_produktivitas', $request->status_produktivitas);
         }
         if ($request->filled('kondisi_rumah_id')) {
             $query->where('kondisi_rumah_id', $request->kondisi_rumah_id);
@@ -201,12 +197,6 @@ class WargaController extends Controller
         }
         if ($request->filled('tanggungan_max')) {
             $query->where('jumlah_tanggungan', '<=', $request->tanggungan_max);
-        }
-        if ($request->filled('pendapatan_min')) {
-            $query->where('pendapatan', '>=', str_replace('.', '', $request->pendapatan_min));
-        }
-        if ($request->filled('pendapatan_max')) {
-            $query->where('pendapatan', '<=', str_replace('.', '', $request->pendapatan_max));
         }
 
         return $query->orderBy('nama_lengkap')->get();
