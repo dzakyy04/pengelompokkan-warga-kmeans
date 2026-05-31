@@ -37,6 +37,8 @@ Route::prefix('admin')->middleware(['web', \App\Http\Middleware\AdminMiddleware:
     // Warga CRUD (admin only)
     Route::get('warga/export-pdf', [WargaController::class, 'exportPdf'])->name('admin.warga.export-pdf');
     Route::get('warga/export-excel', [WargaController::class, 'exportExcel'])->name('admin.warga.export-excel');
+    Route::get('warga/import-template', [WargaController::class, 'downloadTemplate'])->name('admin.warga.import-template');
+    Route::post('warga/import-excel', [WargaController::class, 'importExcel'])->name('admin.warga.import-excel');
     Route::resource('warga', WargaController::class)->names('admin.warga');
 
     // Master Data (admin only)

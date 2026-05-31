@@ -18,6 +18,10 @@
             Excel
         </a>
         @if(auth()->user()->isAdmin())
+        <button type="button" onclick="openModal('importWargaModal')" class="inline-flex items-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Import
+        </button>
         <button type="button" onclick="openModal('createWargaModal')" class="inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Tambah Warga
@@ -229,6 +233,64 @@
     </div>
 </div>
 
+{{-- Import Modal --}}
+<div id="importWargaModal" class="hidden fixed inset-0 z-[60] overflow-y-auto">
+    <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true" onclick="closeModal('importWargaModal')">
+            <div class="absolute inset-0 bg-gray-500 dark:bg-slate-900 opacity-75 dark:opacity-80"></div>
+        </div>
+        <div class="relative z-10 w-full transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-xl transition-all sm:my-8 sm:max-w-lg border border-gray-200 dark:border-slate-700">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center">
+                <h3 class="text-lg leading-6 font-bold text-gray-900 dark:text-white">Import Data Warga</h3>
+                <button type="button" onclick="closeModal('importWargaModal')" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="px-6 py-5">
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 mb-4">
+                    <p class="text-sm text-blue-700 dark:text-blue-300 mb-2"><strong>Format kolom Excel yang dibutuhkan:</strong></p>
+                    <div class="grid grid-cols-2 gap-1 text-xs text-blue-600 dark:text-blue-400 font-mono">
+                        <span>• nama_lengkap</span>
+                        <span>• nik</span>
+                        <span>• rt_rw</span>
+                        <span>• pekerjaan</span>
+                        <span>• status_produktivitas *</span>
+                        <span>• jumlah_tanggungan</span>
+                        <span>• pendidikan</span>
+                        <span>• kondisi_rumah</span>
+                        <span>• bansos</span>
+                    </div>
+                    <p class="text-xs text-blue-500 dark:text-blue-400 mt-2">* Opsional — jika pekerjaan ada di master, status otomatis terisi. Isi manual jika pekerjaan di luar master (Stabil / Cukup Stabil / Tidak Stabil / Tidak Produktif).</p>
+                </div>
+                <div class="mb-4">
+                    <a href="{{ route('admin.warga.import-template') }}" class="inline-flex items-center text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-medium">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Download Template Excel
+                    </a>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Template berisi contoh data dan sheet referensi nilai yang valid.</p>
+                </div>
+                <form method="POST" action="{{ route('admin.warga.import-excel') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Pilih File Excel <span class="text-red-500">*</span></label>
+                        <input type="file" name="file" accept=".xlsx,.xls,.csv" required class="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 dark:file:bg-emerald-900/30 dark:file:text-emerald-400 hover:file:bg-emerald-100">
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Format: .xlsx, .xls, atau .csv. Maksimal 5MB.</p>
+                    </div>
+                    <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl p-3 mb-4">
+                        <p class="text-xs text-amber-700 dark:text-amber-300">
+                            <strong>Catatan:</strong> NIK yang sudah ada di sistem akan otomatis dilewati. Kolom <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded">pendidikan</code>, <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded">kondisi_rumah</code>, dan <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded">bansos</code> harus sesuai dengan data master yang ada.
+                        </p>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeModal('importWargaModal')" class="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-xl transition">Batal</button>
+                        <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">Import Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- Edit Modals --}}
 @foreach($wargas as $w)
 <div id="editWargaModal-{{ $w->id }}" class="hidden fixed inset-0 z-[60] overflow-y-auto">
@@ -361,6 +423,9 @@
             @endif
         @endif
     });
+
+    // === Pekerjaan Form Functions (scoped by formId) ===
+    @include('admin.warga._form_scripts')
 </script>
 @endpush
 @endsection

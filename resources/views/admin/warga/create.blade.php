@@ -18,3 +18,9 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+@include('admin.warga._form_scripts')
+</script>
+@endpush

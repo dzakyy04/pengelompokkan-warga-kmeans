@@ -6,6 +6,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([MasterDataSeeder::class, UserSeeder::class, WargaSeeder::class]);
+        $this->call([
+            MasterDataSeeder::class,
+            UserSeeder::class,
+            // WargaSeeder::class
+        ]);
     }
 }
