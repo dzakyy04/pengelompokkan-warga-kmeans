@@ -116,7 +116,7 @@
                         @foreach($statusProdList as $sp)
                         <option value="{{ $sp['status'] }}" data-skor="{{ $sp['skor'] }}"
                             {{ $isLainnya && $currentStatus === $sp['status'] ? 'selected' : '' }}>
-                            {{ $sp['status'] }} (Skor: {{ $sp['skor'] }})
+                            {{ $sp['status'] }}
                         </option>
                         @endforeach
                     </select>
@@ -139,9 +139,9 @@
             <strong id="summary-status" class="text-emerald-700 dark:text-emerald-400">
                 @if(!$isLainnya && $currentPekerjaan !== '')
                     @php $found = collect($presetPekerjaanList)->firstWhere('pekerjaan', $currentPekerjaan); @endphp
-                    {{ $found ? $found['status'] . ' (Skor: ' . $found['skor'] . ')' : '-' }}
+                    {{ $found ? $found['status'] : '-' }}
                 @elseif($isLainnya && $currentStatus !== '')
-                    {{ $currentStatus }} (Skor: {{ $currentSkor }})
+                    {{ $currentStatus }}
                 @else
                     -
                 @endif
@@ -244,7 +244,7 @@ function selectPekerjaan(row) {
         document.getElementById('input_skor_produktivitas').value = skor;
 
         document.getElementById('summary-pekerjaan').textContent = pekerjaan;
-        document.getElementById('summary-status').textContent = status + ' (Skor: ' + skor + ')';
+        document.getElementById('summary-status').textContent = status;
         document.getElementById('status-summary').classList.remove('hidden');
     }
 }
@@ -262,7 +262,7 @@ function updateLainnyaStatus(sel) {
 
     document.getElementById('input_status_produktivitas').value = status;
     document.getElementById('input_skor_produktivitas').value = skor;
-    document.getElementById('summary-status').textContent = status ? status + ' (Skor: ' + skor + ')' : '-';
+    document.getElementById('summary-status').textContent = status ? status : '-';
     refreshSummaryLainnya();
 }
 

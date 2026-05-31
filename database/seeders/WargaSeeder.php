@@ -19,7 +19,7 @@ class WargaSeeder extends Seeder
         $presetPekerjaan = Warga::presetPekerjaan();
 
         $profiles = [
-            // Ekonomi rendah – pekerjaan tidak stabil / tidak produktif
+            // Prioritas Tinggi – ekonomi rendah, pekerjaan tidak stabil / tidak produktif
             [
                 'pekerjaan_status' => ['Tidak Stabil', 'Tidak Produktif'],
                 'pendidikan'       => ['Tidak Sekolah', 'SD', 'SMP'],
@@ -28,7 +28,7 @@ class WargaSeeder extends Seeder
                 'tanggungan'       => [3, 7],
                 'count'            => 18,
             ],
-            // Ekonomi menengah – pekerjaan cukup stabil
+            // Prioritas Sedang – ekonomi menengah, pekerjaan cukup stabil
             [
                 'pekerjaan_status' => ['Cukup Stabil'],
                 'pendidikan'       => ['SMP', 'SMA', 'Kuliah'],
@@ -37,7 +37,7 @@ class WargaSeeder extends Seeder
                 'tanggungan'       => [2, 5],
                 'count'            => 17,
             ],
-            // Ekonomi mampu – pekerjaan stabil
+            // Prioritas Rendah – ekonomi mampu, pekerjaan stabil
             [
                 'pekerjaan_status' => ['Stabil'],
                 'pendidikan'       => ['SMA', 'Kuliah'],

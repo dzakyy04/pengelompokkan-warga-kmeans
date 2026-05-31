@@ -94,7 +94,7 @@
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Kondisi Rumah</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Bansos</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Tanggungan</th>
-                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Kelompok</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Prioritas Bantuan</th>
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase whitespace-nowrap">Aksi</th>
             </tr></thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
@@ -102,15 +102,15 @@
                 @php
                     $label = $item->assigned_label;
                     $labelFriendly = match($label) {
-                        'Rendah' => 'Ekonomi Rendah',
-                        'Sedang' => 'Ekonomi Menengah',
-                        'Tinggi' => 'Ekonomi Mampu',
+                        'Tinggi' => 'Tinggi',
+                        'Sedang' => 'Sedang',
+                        'Rendah' => 'Rendah',
                         default => $label
                     };
                     $badgeClass = match($label) {
-                        'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+                        'Tinggi' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
                         'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                        'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+                        'Rendah' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
                         default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300'
                     };
                 @endphp
@@ -175,9 +175,9 @@
                                         @foreach($itemCentroids->sortBy('cluster') as $centroid)
                                         @php
                                             $centroidLabel = match($centroid->label) {
-                                                'Rendah' => 'Ekonomi Rendah',
-                                                'Sedang' => 'Ekonomi Menengah',
-                                                'Tinggi' => 'Ekonomi Mampu',
+                                                'Tinggi' => 'Tinggi',
+                                                'Sedang' => 'Sedang',
+                                                'Rendah' => 'Rendah',
                                                 default => $centroid->label
                                             };
                                         @endphp

@@ -331,7 +331,7 @@
             <tbody>
             @foreach($session->centroids->sortBy('cluster') as $c)
             <tr class="cluster-{{ strtolower($c->label) }}">
-                <td><span class="badge badge-{{ strtolower($c->label) }}">{{ match($c->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $c->label } }}</span></td>
+                <td><span class="badge badge-{{ strtolower($c->label) }}">{{ $c->label }}</span></td>
                 <td class="text-center">{{ $c->jumlah_anggota }} orang</td>
                 <td class="text-right">{{ number_format($c->centroid_pekerjaan, 4) }}</td>
                 <td class="text-right">{{ number_format($c->centroid_tanggungan, 4) }}</td>
@@ -348,23 +348,23 @@
     {{-- Detail per Cluster --}}
     @php
         $rekomendasi = [
-            'Rendah' => [
+            'Tinggi' => [
                 'title' => 'Rekomendasi Bantuan',
-                'text' => 'Prioritas penerima bantuan sosial berupa bahan pokok, bantuan langsung tunai (BLT), Program Keluarga Harapan (PKH), dan program jaring pengaman sosial lainnya.',
+                'text' => 'Prioritas utama penerima bantuan sosial berupa bahan pokok, bantuan langsung tunai (BLT), Program Keluarga Harapan (PKH), dan program jaring pengaman sosial lainnya.',
             ],
             'Sedang' => [
                 'title' => 'Rekomendasi Program',
                 'text' => 'Target program pelatihan keterampilan, bantuan modal usaha mikro (UMKM), program pengembangan kapasitas, dan pendampingan ekonomi produktif.',
             ],
-            'Tinggi' => [
+            'Rendah' => [
                 'title' => 'Rekomendasi Peran',
-                'text' => 'Potensi sebagai mentor dan pembina masyarakat, fasilitator pembangunan desa, serta mitra dalam program pemberdayaan ekonomi warga.',
+                'text' => 'Tidak menjadi prioritas penerima bantuan. Potensi sebagai mentor dan pembina masyarakat, fasilitator pembangunan desa, serta mitra dalam program pemberdayaan ekonomi warga.',
             ],
         ];
         $clusterNames = [
-            'Rendah' => 'Ekonomi Rendah',
-            'Sedang' => 'Ekonomi Menengah',
-            'Tinggi' => 'Ekonomi Mampu',
+            'Tinggi' => 'Tinggi',
+            'Sedang' => 'Sedang',
+            'Rendah' => 'Rendah',
         ];
         $romanNumerals = [4 => 'IV', 5 => 'V', 6 => 'VI', 7 => 'VII'];
         $sectionNum = 4;

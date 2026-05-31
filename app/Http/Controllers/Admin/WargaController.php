@@ -8,6 +8,7 @@ use App\Models\ClusteringSession;
 use App\Models\MasterPendidikan;
 use App\Models\MasterKondisiRumah;
 use App\Models\MasterBansos;
+use App\Models\MasterPekerjaan;
 use App\Services\KMeansService;
 use App\Exports\WargaExport;
 use Illuminate\Http\Request;
@@ -48,8 +49,8 @@ class WargaController extends Controller
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
-        $presetPekerjaan = \App\Models\Warga::presetPekerjaan();
-        $statusProduktivitas = \App\Models\Warga::statusProduktivitas();
+        $presetPekerjaan = MasterPekerjaan::orderBy('skor')->orderBy('nama')->get()->map(fn($p) => ['pekerjaan' => $p->nama, 'status' => $p->status_produktivitas, 'skor' => $p->skor])->toArray();
+        $statusProduktivitas = MasterPekerjaan::statusProduktivitasList();
 
         return view('admin.warga.index', compact('wargas', 'pendidikans', 'kondisiRumahs', 'bansos', 'presetPekerjaan', 'statusProduktivitas'));
     }
@@ -61,8 +62,8 @@ class WargaController extends Controller
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
-        $presetPekerjaan = \App\Models\Warga::presetPekerjaan();
-        $statusProduktivitas = \App\Models\Warga::statusProduktivitas();
+        $presetPekerjaan = MasterPekerjaan::orderBy('skor')->orderBy('nama')->get()->map(fn($p) => ['pekerjaan' => $p->nama, 'status' => $p->status_produktivitas, 'skor' => $p->skor])->toArray();
+        $statusProduktivitas = MasterPekerjaan::statusProduktivitasList();
         return view('admin.warga.create', compact('pendidikans', 'kondisiRumahs', 'bansos', 'presetPekerjaan', 'statusProduktivitas'));
     }
 
@@ -94,9 +95,9 @@ class WargaController extends Controller
                 $service = new KMeansService();
                 $result = $service->classifyNewWarga($warga);
                 $labelFriendly = match($result->assigned_label) {
-                    'Rendah' => 'Ekonomi Rendah',
-                    'Sedang' => 'Ekonomi Menengah',
-                    'Tinggi' => 'Ekonomi Mampu',
+                    'Tinggi' => 'Tinggi',
+                    'Sedang' => 'Sedang',
+                    'Rendah' => 'Rendah',
                     default => $result->assigned_label,
                 };
                 $classificationMsg = " Otomatis terkelompokkan ke: {$labelFriendly} (menunggu validasi Kepala Desa).";
@@ -116,8 +117,8 @@ class WargaController extends Controller
         $pendidikans = MasterPendidikan::orderBy('skor')->get();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->get();
         $bansos = MasterBansos::orderBy('skor', 'desc')->get();
-        $presetPekerjaan = \App\Models\Warga::presetPekerjaan();
-        $statusProduktivitas = \App\Models\Warga::statusProduktivitas();
+        $presetPekerjaan = MasterPekerjaan::orderBy('skor')->orderBy('nama')->get()->map(fn($p) => ['pekerjaan' => $p->nama, 'status' => $p->status_produktivitas, 'skor' => $p->skor])->toArray();
+        $statusProduktivitas = MasterPekerjaan::statusProduktivitasList();
         return view('admin.warga.edit', compact('warga', 'pendidikans', 'kondisiRumahs', 'bansos', 'presetPekerjaan', 'statusProduktivitas'));
     }
 
@@ -154,9 +155,9 @@ class WargaController extends Controller
                 $service = new KMeansService();
                 $result = $service->classifyNewWarga($warga);
                 $labelFriendly = match($result->assigned_label) {
-                    'Rendah' => 'Ekonomi Rendah',
-                    'Sedang' => 'Ekonomi Menengah',
-                    'Tinggi' => 'Ekonomi Mampu',
+                    'Tinggi' => 'Tinggi',
+                    'Sedang' => 'Sedang',
+                    'Rendah' => 'Rendah',
                     default => $result->assigned_label,
                 };
                 $classificationMsg = " Kelompok diperbarui ke: {$labelFriendly} (menunggu validasi Kepala Desa).";

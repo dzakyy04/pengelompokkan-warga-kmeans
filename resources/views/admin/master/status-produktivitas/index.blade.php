@@ -6,38 +6,25 @@
 <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
     <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Status Produktivitas Pekerjaan</h1>
-        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Daftar referensi status produktivitas dan skor yang digunakan dalam pengelompokan warga</p>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Kelola daftar pekerjaan beserta status produktivitasnya. Diurutkan dari skor terendah.</p>
     </div>
-    <span class="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold rounded-xl border border-blue-200 dark:border-blue-800">
-        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        Data Referensi (Read-only)
-    </span>
-</div>
-
-{{-- Info card --}}
-<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-2xl p-4 mb-6">
-    <div class="flex gap-3">
-        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <div class="text-sm text-blue-700 dark:text-blue-300">
-            <strong>Cara penggunaan:</strong> Saat menambah data warga, pilih pekerjaan dari daftar preset — status produktivitas dan skor akan terisi otomatis.
-            Jika pekerjaan tidak ada dalam daftar, pilih <em>"Lainnya"</em> dan tentukan status produktivitasnya secara manual.
-            Skor ini digunakan sebagai fitur pengelompokan warga.
-        </div>
-    </div>
+    <button onclick="openModal('create')" class="w-full md:w-auto justify-center inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Tambah Pekerjaan
+    </button>
 </div>
 
 {{-- Stat summary cards --}}
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     @php
         $badgeConfig = [
-            'Stabil'          => ['from-teal-500 to-teal-600',  'text-teal-100',  'bg-teal-100  text-teal-700  dark:bg-teal-900/30  dark:text-teal-400'],
-            'Cukup Stabil'    => ['from-blue-500 to-blue-600',  'text-blue-100',  'bg-blue-100  text-blue-700  dark:bg-blue-900/30  dark:text-blue-400'],
-            'Tidak Stabil'    => ['from-amber-500 to-amber-600','text-amber-100', 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'],
-            'Tidak Produktif' => ['from-rose-500 to-rose-600',  'text-rose-100',  'bg-rose-100  text-rose-700  dark:bg-rose-900/30  dark:text-rose-400'],
+            'Tidak Produktif' => ['from-rose-500 to-rose-600',  'text-rose-100'],
+            'Tidak Stabil'    => ['from-amber-500 to-amber-600','text-amber-100'],
+            'Cukup Stabil'    => ['from-blue-500 to-blue-600',  'text-blue-100'],
+            'Stabil'          => ['from-teal-500 to-teal-600',  'text-teal-100'],
         ];
     @endphp
     @foreach($statusList as $sp)
-    @php $cfg = $badgeConfig[$sp['status']] ?? ['from-gray-500 to-gray-600','text-gray-100','bg-gray-100 text-gray-700']; @endphp
+    @php $cfg = $badgeConfig[$sp['status']] ?? ['from-gray-500 to-gray-600','text-gray-100']; @endphp
     <div class="bg-gradient-to-br {{ $cfg[0] }} rounded-2xl p-5 text-white relative overflow-hidden">
         <div class="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -mr-8 -mt-8"></div>
         <div class="relative z-10">
@@ -49,84 +36,147 @@
     @endforeach
 </div>
 
-{{-- Tabel preset pekerjaan --}}
+{{-- Tabel Pekerjaan --}}
 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-slate-700">
-        <h2 class="text-base font-bold text-gray-900 dark:text-white">Daftar Preset Pekerjaan & Status Produktivitas</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Pekerjaan di bawah ini sudah memiliki status dan skor otomatis saat dipilih pada form data warga</p>
-    </div>
     <table id="statusProdTable" class="w-full text-sm">
         <thead class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700">
             <tr>
-                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider w-12">No</th>
-                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Pekerjaan</th>
-                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Status Produktivitas</th>
-                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider w-24">Skor</th>
-                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider w-32">Warga</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase w-16">No</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Pekerjaan</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Status Produktivitas</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Skor</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Jumlah Warga</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase w-32">Aksi</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
-            @php $presetPekerjaan = \App\Models\Warga::presetPekerjaan(); @endphp
-            @foreach($presetPekerjaan as $i => $preset)
+        <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
+            @forelse($pekerjaans as $item)
             @php
-                $badge = match($preset['status']) {
+                $badge = match($item->status_produktivitas) {
                     'Stabil'          => 'bg-teal-100  text-teal-700  dark:bg-teal-900/30  dark:text-teal-400',
                     'Cukup Stabil'    => 'bg-blue-100  text-blue-700  dark:bg-blue-900/30  dark:text-blue-400',
                     'Tidak Stabil'    => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
                     'Tidak Produktif' => 'bg-rose-100  text-rose-700  dark:bg-rose-900/30  dark:text-rose-400',
                     default           => 'bg-gray-100  text-gray-600  dark:bg-slate-700    dark:text-gray-300',
                 };
-                // Hitung warga per pekerjaan
-                $wargaCount = \App\Models\Warga::where('pekerjaan', $preset['pekerjaan'])->count();
+                $skorBadge = match($item->skor) {
+                    4 => 'bg-teal-100  text-teal-700  dark:bg-teal-900/30  dark:text-teal-400',
+                    3 => 'bg-blue-100  text-blue-700  dark:bg-blue-900/30  dark:text-blue-400',
+                    2 => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                    1 => 'bg-rose-100  text-rose-700  dark:bg-rose-900/30  dark:text-rose-400',
+                    default => 'bg-gray-100 text-gray-600',
+                };
+                $wargaCount = \App\Models\Warga::where('pekerjaan', $item->nama)->count();
             @endphp
             <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $i + 1 }}</td>
-                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $preset['pekerjaan'] }}</td>
-                <td class="px-4 py-3">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-semibold {{ $badge }}">
-                        {{ $preset['status'] }}
-                    </span>
-                </td>
-                <td class="px-4 py-3 text-center">
-                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                        {{ match($preset['skor']) {
-                            4 => 'bg-teal-100  text-teal-700  dark:bg-teal-900/30  dark:text-teal-400',
-                            3 => 'bg-blue-100  text-blue-700  dark:bg-blue-900/30  dark:text-blue-400',
-                            2 => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                            1 => 'bg-rose-100  text-rose-700  dark:bg-rose-900/30  dark:text-rose-400',
-                            default => 'bg-gray-100 text-gray-600',
-                        } }}">
-                        {{ $preset['skor'] }}
-                    </span>
-                </td>
-                <td class="px-4 py-3 text-center">
-                    <span class="px-2.5 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-semibold">
-                        {{ $wargaCount }}
-                    </span>
-                </td>
+                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $loop->iteration }}</td>
+                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $item->nama }}</td>
+                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-semibold {{ $badge }}">{{ $item->status_produktivitas }}</span></td>
+                <td class="px-4 py-3 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold {{ $skorBadge }}">{{ $item->skor }}</span></td>
+                <td class="px-4 py-3 text-center"><span class="px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-semibold">{{ $wargaCount }}</span></td>
+                <td class="px-4 py-3 text-center"><div class="flex items-center justify-center gap-1">
+                    <button onclick="openModal('edit', {{ $item->id }}, '{{ addslashes($item->nama) }}', '{{ $item->status_produktivitas }}', {{ $item->skor }})" class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                    <form method="POST" action="{{ route('admin.master-status-produktivitas.destroy', $item->id) }}" onsubmit="return confirm('Hapus pekerjaan ini?')">@csrf @method('DELETE')<button class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></form>
+                </div></td>
             </tr>
-            @endforeach
-            {{-- Baris khusus "Lainnya" --}}
-            @php $wargaLainnya = \App\Models\Warga::whereNotIn('pekerjaan', collect($presetPekerjaan)->pluck('pekerjaan')->toArray())->whereNotNull('pekerjaan')->count(); @endphp
-            <tr class="bg-gray-50/50 dark:bg-slate-700/20 hover:bg-gray-100/50 dark:hover:bg-slate-700/40 transition-colors">
-                <td class="px-4 py-3 text-gray-400 dark:text-gray-500">—</td>
-                <td class="px-4 py-3 italic text-gray-500 dark:text-gray-400">Lainnya (diisi manual)</td>
-                <td class="px-4 py-3 text-gray-400 dark:text-gray-500 text-xs">Ditentukan oleh admin</td>
-                <td class="px-4 py-3 text-center text-gray-400 dark:text-gray-500 text-xs">1–4</td>
-                <td class="px-4 py-3 text-center">
-                    <span class="px-2.5 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-semibold">{{ $wargaLainnya }}</span>
-                </td>
-            </tr>
+            @empty<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada data.</td></tr>@endforelse
         </tbody>
     </table>
 </div>
+
+{{-- Modal --}}
+<div id="modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="relative bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-2xl w-full max-w-md p-6 z-10 transform transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="modalTitle" class="text-lg font-bold text-gray-900 dark:text-white">Tambah Pekerjaan</h3>
+                <button onclick="closeModal()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form id="modalForm" method="POST">
+                @csrf
+                <div id="methodField"></div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nama Pekerjaan <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama" id="inputNama" required placeholder="Contoh: Sopir, Tukang, dll." class="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition-colors">
+                    @error('nama')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Status Produktivitas <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <select name="status_produktivitas" id="inputStatus" required onchange="updateSkor()" class="appearance-none w-full pl-4 pr-9 py-2.5 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition-colors">
+                            <option value="">-- Pilih Status --</option>
+                            @foreach($statusList as $sp)
+                            <option value="{{ $sp['status'] }}" data-skor="{{ $sp['skor'] }}">{{ $sp['status'] }}</option>
+                            @endforeach
+                        </select>
+                        <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
+                    </div>
+                    @error('status_produktivitas')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Skor</label>
+                    <input type="number" name="skor" id="inputSkor" min="1" max="4" readonly class="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900/50 text-gray-900 dark:text-white rounded-xl text-sm outline-none cursor-not-allowed">
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Skor otomatis berdasarkan status produktivitas.</p>
+                </div>
+                <div class="flex gap-3 justify-end">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-xl transition">Batal</button>
+                    <button type="submit" id="submitBtn" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if($errors->any())
+<script>document.addEventListener('DOMContentLoaded', () => openModal('create'));</script>
+@endif
+
+<script>
+function updateSkor() {
+    var sel = document.getElementById('inputStatus');
+    var opt = sel.options[sel.selectedIndex];
+    document.getElementById('inputSkor').value = opt.dataset.skor || '';
+}
+
+function openModal(mode, id, nama, status, skor) {
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('modalForm');
+    const title = document.getElementById('modalTitle');
+    const method = document.getElementById('methodField');
+    const btn = document.getElementById('submitBtn');
+
+    if (mode === 'edit') {
+        title.textContent = 'Edit Pekerjaan';
+        btn.textContent = 'Perbarui';
+        form.action = '{{ url("admin/master-status-produktivitas") }}/' + id;
+        method.innerHTML = '<input type="hidden" name="_method" value="PUT">';
+        document.getElementById('inputNama').value = nama || '';
+        document.getElementById('inputStatus').value = status || '';
+        document.getElementById('inputSkor').value = skor || 1;
+    } else {
+        title.textContent = 'Tambah Pekerjaan';
+        btn.textContent = 'Simpan';
+        form.action = '{{ route("admin.master-status-produktivitas.store") }}';
+        method.innerHTML = '';
+        document.getElementById('inputNama').value = '';
+        document.getElementById('inputStatus').value = '';
+        document.getElementById('inputSkor').value = '';
+    }
+    modal.classList.remove('hidden');
+    setTimeout(() => document.getElementById('inputNama').focus(), 100);
+}
+
+function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
 
 @push('scripts')
 <script>
 $(document).ready(function() {
     $('#statusProdTable').DataTable({
         language: {
-            search: "Cari: ",
+            search: "Cari:",
             lengthMenu: "Tampilkan _MENU_ data",
             info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
             infoEmpty: "Tidak ada data",
@@ -135,8 +185,8 @@ $(document).ready(function() {
             paginate: { first: "«", last: "»", next: "›", previous: "‹" }
         },
         pageLength: 25,
-        order: [[3, 'desc']],
-        columnDefs: [{ orderable: false, targets: [0] }]
+        order: [[3, 'asc']],
+        columnDefs: [{ orderable: false, targets: [0, 5] }]
     });
 });
 </script>

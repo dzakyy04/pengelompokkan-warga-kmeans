@@ -99,7 +99,8 @@ class KMeansService
             }
         }
 
-        // 5. Auto-label clusters by average skor_produktivitas (Rendah < Sedang < Tinggi)
+        // 5. Auto-label clusters by average skor_produktivitas
+        // Prioritas bantuan: ekonomi terendah = Tinggi (prioritas tinggi), ekonomi tertinggi = Rendah (prioritas rendah)
         $grouped = collect($wargaClusterMap)->groupBy('cluster');
         $clusterAvg = [];
         foreach ($grouped as $ci => $members) {
@@ -108,7 +109,7 @@ class KMeansService
         }
         asort($clusterAvg);
 
-        $labels = ['Rendah', 'Sedang', 'Tinggi'];
+        $labels = ['Tinggi', 'Sedang', 'Rendah'];
         $labelMap = [];
         $i = 0;
         foreach (array_keys($clusterAvg) as $ci) {

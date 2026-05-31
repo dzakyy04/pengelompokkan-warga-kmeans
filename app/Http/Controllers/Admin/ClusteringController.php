@@ -46,7 +46,7 @@ class ClusteringController extends Controller
 
             $service = new KMeansService();
             $session = $service->process(3, 100);
-            return redirect()->route('admin.clustering.pending-classifications')
+            return redirect()->route('admin.clustering.index')
                 ->with('success', 'Pengelompokan warga berhasil! Semua data menunggu verifikasi Kepala Desa sebelum diaktifkan sebagai acuan.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal: ' . $e->getMessage());

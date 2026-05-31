@@ -59,7 +59,7 @@
         </div>
         <form method="POST" action="{{ route('admin.clustering.process') }}">
             @csrf
-            <button type="submit" class="w-full px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl transition shadow-sm" onclick="return confirm('Apakah Anda yakin ingin memproses ulang pengelompokan? Acuan pengelompokan saat ini akan digantikan.') && (this.disabled=true, this.innerText='Sedang memproses...', true)">
+            <button type="submit" class="w-full px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl transition shadow-sm" onclick="if(confirm('Apakah Anda yakin ingin memproses ulang pengelompokan? Acuan pengelompokan saat ini akan digantikan.')){this.disabled=true;this.innerText='Sedang memproses...';this.form.submit();}else{return false;}">
                 Proses Ulang Pengelompokan
             </button>
         </form>
@@ -71,8 +71,9 @@
     {{-- Belum ada acuan — tampilkan form pertama kali atau status menunggu verifikasi --}}
     @if(isset($pendingVerificationSession) && $pendingVerificationSession)
     {{-- Ada session yang menunggu verifikasi kades --}}
-    <div class="max-w-3xl">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-amber-200 dark:border-amber-800/50 p-6 mb-6 transition-colors duration-200">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Card status menunggu --}}
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-amber-200 dark:border-amber-800/50 p-6 transition-colors duration-200">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
                     <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -94,35 +95,165 @@
                 Verifikasi {{ $pendingVerificationCount }} Data Warga
             </a>
             @else
-            <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-2">Menunggu Kepala Desa memverifikasi data...</p>
+            <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Menunggu Kepala Desa memverifikasi data...</p>
+            </div>
             @endif
+        </div>
+
+        {{-- Card progress --}}
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900 dark:text-white">Detail Proses</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Informasi pengelompokan terakhir</p>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Total Warga Diproses</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $pendingVerificationCount }} orang</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Jumlah Kelompok</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $pendingVerificationSession->jumlah_cluster }} kelompok</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Status</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Menunggu Verifikasi</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Metode</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">K-Means Clustering</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Normalisasi</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">Min-Max (0–1)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Alur proses --}}
+    <div class="mt-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
+        <h3 class="font-bold text-gray-900 dark:text-white mb-4">Alur Proses Pengelompokan</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-200 dark:border-emerald-800/30">
+                <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <p class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Admin Memproses</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Selesai ✓</p>
+            </div>
+            <div class="text-center p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border-2 border-amber-300 dark:border-amber-700">
+                <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse">
+                    <span class="text-sm font-bold text-white">2</span>
+                </div>
+                <p class="text-sm font-semibold text-amber-700 dark:text-amber-400">Kades Verifikasi</p>
+                <p class="text-xs text-amber-600 dark:text-amber-400 mt-1 font-medium">Sedang berlangsung...</p>
+            </div>
+            <div class="text-center p-4 bg-gray-50 dark:bg-slate-700/30 rounded-xl border border-gray-200 dark:border-slate-600">
+                <div class="w-10 h-10 bg-gray-300 dark:bg-slate-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-sm font-bold text-white">3</span>
+                </div>
+                <p class="text-sm font-semibold text-gray-400 dark:text-gray-500">Acuan Aktif</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Menunggu</p>
+            </div>
         </div>
     </div>
     @else
-    <div class="max-w-3xl">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 mb-6 transition-colors duration-200">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
-                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Card utama: Mulai Pengelompokan --}}
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900 dark:text-white">Siap Memproses</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $totalWarga }} warga tersedia untuk dikelompokkan</p>
+                </div>
             </div>
-            <div>
-                <h3 class="font-bold text-gray-900 dark:text-white">Siap Memproses</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $totalWarga }} warga tersedia untuk dikelompokkan</p>
+
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 mb-4">
+                <p class="text-sm text-blue-700 dark:text-blue-300">
+                    <strong class="dark:text-blue-200">Cara kerja:</strong> Sistem mengelompokkan warga secara otomatis berdasarkan 5 parameter ekonomi. Hasilnya perlu diverifikasi oleh Kepala Desa sebelum diaktifkan.
+                </p>
             </div>
+
+            <form method="POST" action="{{ route('admin.clustering.process') }}">
+                @csrf
+                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl transition shadow-lg hover:shadow-xl" onclick="this.disabled=true;this.innerText='Sedang memproses...';this.form.submit();">
+                    Mulai Pengelompokan Warga
+                </button>
+            </form>
         </div>
 
-        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 mb-4">
-            <p class="text-sm text-blue-700 dark:text-blue-300">
-                <strong class="dark:text-blue-200">Cara kerja:</strong> Sistem akan mengelompokkan warga secara otomatis berdasarkan pekerjaan, jumlah tanggungan, pendidikan kepala keluarga, kondisi rumah, dan bantuan sosial yang diterima. Hasilnya perlu diverifikasi oleh Kepala Desa (per data) sebelum diaktifkan sebagai acuan pengelompokan.
-            </p>
+        {{-- Card info: Parameter yang digunakan --}}
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900 dark:text-white">Parameter Pengelompokan</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">5 parameter yang digunakan untuk pengelompokan</p>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="w-7 h-7 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-xs font-bold text-emerald-700 dark:text-emerald-400">1</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Pekerjaan & Status Produktivitas</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="w-7 h-7 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-xs font-bold text-emerald-700 dark:text-emerald-400">2</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Jumlah Tanggungan</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="w-7 h-7 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-xs font-bold text-emerald-700 dark:text-emerald-400">3</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Pendidikan Kepala Keluarga</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="w-7 h-7 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-xs font-bold text-emerald-700 dark:text-emerald-400">4</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Kondisi Rumah</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
+                    <span class="w-7 h-7 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-xs font-bold text-emerald-700 dark:text-emerald-400">5</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Bantuan Sosial yang Diterima</span>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <form method="POST" action="{{ route('admin.clustering.process') }}">
-            @csrf
-            <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl transition shadow-lg hover:shadow-xl" onclick="this.disabled=true;this.innerText='Sedang memproses...';this.form.submit();">
-                Mulai Pengelompokan Warga
-            </button>
-        </form>
+    {{-- Info alur proses --}}
+    <div class="mt-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 transition-colors duration-200">
+        <h3 class="font-bold text-gray-900 dark:text-white mb-4">Alur Proses Pengelompokan</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-800/30">
+                <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-sm font-bold text-emerald-700 dark:text-emerald-400">1</span>
+                </div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">Admin Memproses</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Jalankan pengelompokan pada data warga</p>
+            </div>
+            <div class="text-center p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-100 dark:border-amber-800/30">
+                <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-sm font-bold text-amber-700 dark:text-amber-400">2</span>
+                </div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">Kades Verifikasi</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kepala Desa meninjau setiap data warga</p>
+            </div>
+            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-sm font-bold text-blue-700 dark:text-blue-400">3</span>
+                </div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">Acuan Aktif</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Warga baru otomatis terkelompokkan</p>
+            </div>
         </div>
     </div>
     @endif

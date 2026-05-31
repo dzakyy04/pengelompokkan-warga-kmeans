@@ -22,15 +22,15 @@
         </div>
     </div>
 
-    <div class="bg-gradient-to-br from-rose-500 to-rose-600 rounded-3xl shadow-xl p-6 text-white hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+    <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl shadow-xl p-6 text-white hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
         <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
         <div class="relative z-10">
             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm mb-3">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
             </div>
             <h3 class="text-4xl font-bold mb-1">{{ $clusterDistribution['Rendah'] }}</h3>
-            <p class="text-sm text-rose-100 font-semibold">Ekonomi Rendah</p>
-            <span class="text-xs text-rose-100 opacity-80 mt-2 block">Perlu bantuan pokok</span>
+            <p class="text-sm text-teal-100 font-semibold">Rendah</p>
+            <span class="text-xs text-teal-100 opacity-80 mt-2 block">Tidak membutuhkan bantuan</span>
         </div>
     </div>
 
@@ -41,20 +41,20 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
             </div>
             <h3 class="text-4xl font-bold mb-1">{{ $clusterDistribution['Sedang'] }}</h3>
-            <p class="text-sm text-amber-100 font-semibold">Ekonomi Menengah</p>
-            <span class="text-xs text-amber-100 opacity-80 mt-2 block">Pelatihan UMKM</span>
+            <p class="text-sm text-amber-100 font-semibold">Sedang</p>
+            <span class="text-xs text-amber-100 opacity-80 mt-2 block">Target pemberdayaan</span>
         </div>
     </div>
 
-    <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl shadow-xl p-6 text-white hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+    <div class="bg-gradient-to-br from-rose-500 to-rose-600 rounded-3xl shadow-xl p-6 text-white hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
         <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
         <div class="relative z-10">
             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm mb-3">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
             </div>
             <h3 class="text-4xl font-bold mb-1">{{ $clusterDistribution['Tinggi'] }}</h3>
-            <p class="text-sm text-teal-100 font-semibold">Ekonomi Mampu</p>
-            <span class="text-xs text-teal-100 opacity-80 mt-2 block">Potensi mentor</span>
+            <p class="text-sm text-rose-100 font-semibold">Tinggi</p>
+            <span class="text-xs text-rose-100 opacity-80 mt-2 block">Paling membutuhkan bantuan</span>
         </div>
     </div>
 </div>
@@ -164,14 +164,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const doughnutChart = new Chart(document.getElementById('clusterDoughnut').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: ['Ekonomi Rendah','Ekonomi Menengah','Ekonomi Mampu'], datasets: [{ data: [{{ $clusterDistribution['Rendah'] }}, {{ $clusterDistribution['Sedang'] }}, {{ $clusterDistribution['Tinggi'] }}], backgroundColor: ['rgba(244,63,94,0.85)','rgba(245,158,11,0.85)','rgba(20,184,166,0.85)'], borderWidth: 3, borderColor: theme.borderColor, hoverOffset: 8 }] },
+        data: { labels: ['Rendah','Sedang','Tinggi'], datasets: [{ data: [{{ $clusterDistribution['Rendah'] }}, {{ $clusterDistribution['Sedang'] }}, {{ $clusterDistribution['Tinggi'] }}], backgroundColor: ['rgba(20,184,166,0.85)','rgba(245,158,11,0.85)','rgba(244,63,94,0.85)'], borderWidth: 3, borderColor: theme.borderColor, hoverOffset: 8 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: theme.textColor, padding: 16, font: { size: 11, weight: '500' }, usePointStyle: true, pointStyle: 'circle', boxWidth: 8 } }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', padding: 12, cornerRadius: 10, titleFont: { size: 13, weight: 'bold' } } } }
     });
 
     const barChart = new Chart(document.getElementById('incomeBar').getContext('2d'), {
         type: 'bar',
         data: {
-            labels: ['Ekonomi Rendah', 'Ekonomi Menengah', 'Ekonomi Mampu'],
+            labels: ['Rendah', 'Sedang', 'Tinggi'],
             datasets: [
                 {
                     label: 'Stabil',

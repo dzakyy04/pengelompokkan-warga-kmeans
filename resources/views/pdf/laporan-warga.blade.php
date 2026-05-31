@@ -211,9 +211,9 @@
             @endif
             @if($kelompok)
             <tr>
-                <td class="label">Filter Kelompok</td>
+                <td class="label">Filter Prioritas</td>
                 <td class="separator">:</td>
-                <td>{{ match($kelompok) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $kelompok } }}</td>
+                <td>{{ match($kelompok) { 'Tinggi' => 'Tinggi', 'Sedang' => 'Sedang', 'Rendah' => 'Rendah', default => $kelompok } }}</td>
             </tr>
             @endif
             <tr>
@@ -237,7 +237,7 @@
                 <th>Tanggungan</th>
                 <th>Kondisi Rumah</th>
                 <th>Bansos</th>
-                <th>Kelompok</th>
+                <th>Prioritas Bantuan</th>
             </tr>
         </thead>
         <tbody>
@@ -255,7 +255,7 @@
                 <td class="text-center">
                     @if($w->latestClusteringResult)
                     <span class="badge badge-{{ strtolower($w->latestClusteringResult->label) }}">
-                        {{ match($w->latestClusteringResult->label) { 'Rendah' => 'Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $w->latestClusteringResult->label } }}
+                        {{ $w->latestClusteringResult->label }}
                     </span>
                     @else
                     -
@@ -268,10 +268,10 @@
 
     {{-- Keterangan --}}
     <div class="keterangan">
-        <strong>Keterangan Kelompok Ekonomi:</strong><br>
-        &bull; <strong>Rendah</strong> — Ekonomi rendah, prioritas penerima bantuan sosial<br>
-        &bull; <strong>Menengah</strong> — Ekonomi menengah, target program pelatihan dan pemberdayaan<br>
-        &bull; <strong>Mampu</strong> — Ekonomi mampu, potensi sebagai mentor dan pembina masyarakat
+        <strong>Keterangan Prioritas Penerima Bantuan:</strong><br>
+        &bull; <strong>Rendah</strong> — Tidak membutuhkan bantuan, ekonomi mampu<br>
+        &bull; <strong>Sedang</strong> — Target program pelatihan dan pemberdayaan<br>
+        &bull; <strong>Tinggi</strong> — Prioritas utama penerima bantuan sosial
     </div>
 
 

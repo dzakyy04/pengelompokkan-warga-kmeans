@@ -44,6 +44,9 @@ Route::prefix('admin')->middleware(['web', \App\Http\Middleware\AdminMiddleware:
     Route::resource('master-kondisi-rumah', MasterKondisiRumahController::class)->names('admin.master-kondisi-rumah');
     Route::resource('master-bansos', MasterBansosController::class)->names('admin.master-bansos')->except(['create', 'edit', 'show']);
     Route::get('master-status-produktivitas', [MasterStatusProduktivitasController::class, 'index'])->name('admin.master-status-produktivitas.index');
+    Route::post('master-status-produktivitas', [MasterStatusProduktivitasController::class, 'store'])->name('admin.master-status-produktivitas.store');
+    Route::put('master-status-produktivitas/{id}', [MasterStatusProduktivitasController::class, 'update'])->name('admin.master-status-produktivitas.update');
+    Route::delete('master-status-produktivitas/{id}', [MasterStatusProduktivitasController::class, 'destroy'])->name('admin.master-status-produktivitas.destroy');
 
     // Pengelompokan
     Route::get('clustering', [ClusteringController::class, 'index'])->name('admin.clustering.index');

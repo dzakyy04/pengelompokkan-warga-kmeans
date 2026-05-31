@@ -62,12 +62,12 @@
     @foreach($session->centroids->sortBy(fn($c) => match($c->label) { 'Rendah' => 0, 'Sedang' => 1, 'Tinggi' => 2, default => 3 }) as $c)
     @php
         $colors = match($c->label) {
-            'Rendah' => ['from-rose-500 to-rose-600', 'text-rose-100'],
+            'Tinggi' => ['from-rose-500 to-rose-600', 'text-rose-100'],
             'Sedang' => ['from-amber-500 to-amber-600', 'text-amber-100'],
-            'Tinggi' => ['from-teal-500 to-teal-600', 'text-teal-100'],
+            'Rendah' => ['from-teal-500 to-teal-600', 'text-teal-100'],
             default  => ['from-gray-500 to-gray-600', 'text-gray-100'],
         };
-        $labelFriendly = match($c->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $c->label };
+        $labelFriendly = match($c->label) { 'Tinggi' => 'Tinggi', 'Sedang' => 'Sedang', 'Rendah' => 'Rendah', default => $c->label };
     @endphp
     <div class="bg-gradient-to-br {{ $colors[0] }} rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
@@ -75,7 +75,7 @@
             <h4 class="text-lg font-bold mb-1">{{ $labelFriendly }}</h4>
             <p class="text-4xl font-extrabold my-2">{{ $c->jumlah_anggota }} <span class="text-base font-semibold {{ $colors[1] }}">orang</span></p>
             <p class="text-sm {{ $colors[1] }} opacity-80">
-                {{ match($c->label) { 'Rendah' => 'Memerlukan bantuan bahan pokok', 'Sedang' => 'Cocok untuk pelatihan UMKM', 'Tinggi' => 'Potensi sebagai mentor', default => '' } }}
+                {{ match($c->label) { 'Tinggi' => 'Paling membutuhkan bantuan sosial', 'Sedang' => 'Target program pelatihan & pemberdayaan', 'Rendah' => 'Tidak membutuhkan bantuan', default => '' } }}
             </p>
         </div>
     </div>
@@ -101,7 +101,7 @@
                 <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Tanggungan</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Kondisi Rumah</th>
                 <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Bansos</th>
-                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Kelompok</th>
+                <th class="px-4 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase">Prioritas Bantuan</th>
             </tr></thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
                 @foreach($session->results->sortBy(fn($r) => match($r->label) { 'Rendah' => 0, 'Sedang' => 1, 'Tinggi' => 2, default => 3 }) as $r)
@@ -131,8 +131,8 @@
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->kondisiRumah->nama ?? '-' }}</td>
                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $r->warga->bansos->nama ?? '-' }}</td>
                     <td class="px-4 py-3 text-center">
-                        <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($r->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">
-                            {{ match($r->label) { 'Rendah' => 'Ekonomi Rendah', 'Sedang' => 'Ekonomi Menengah', 'Tinggi' => 'Ekonomi Mampu', default => $r->label } }}
+                        <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold {{ match($r->label) { 'Tinggi' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Rendah' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">
+                            {{ $r->label }}
                         </span>
                     </td>
                 </tr>

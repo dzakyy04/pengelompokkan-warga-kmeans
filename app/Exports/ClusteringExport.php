@@ -30,7 +30,7 @@ class ClusteringExport implements FromCollection, WithHeadings, WithMapping, Wit
 
     public function headings(): array
     {
-        return ['No', 'NIK', 'Nama Lengkap', 'Pendidikan KK', 'Pekerjaan', 'Status Produktivitas', 'Tanggungan', 'Kondisi Rumah', 'Bansos', 'Kelompok'];
+        return ['No', 'NIK', 'Nama Lengkap', 'Pendidikan KK', 'Pekerjaan', 'Status Produktivitas', 'Tanggungan', 'Kondisi Rumah', 'Bansos', 'Prioritas Bantuan'];
     }
 
     public function map($result): array
@@ -38,9 +38,9 @@ class ClusteringExport implements FromCollection, WithHeadings, WithMapping, Wit
         $this->row++;
 
         $kelompok = match($result->label) {
-            'Rendah' => 'Ekonomi Rendah',
-            'Sedang' => 'Ekonomi Menengah',
-            'Tinggi' => 'Ekonomi Mampu',
+            'Tinggi' => 'Tinggi',
+            'Sedang' => 'Sedang',
+            'Rendah' => 'Rendah',
             default => $result->label,
         };
 

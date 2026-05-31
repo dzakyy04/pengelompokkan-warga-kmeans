@@ -92,10 +92,10 @@
         </div>
         <div class="relative">
             <select id="f_kelompok" class="w-full appearance-none pl-3 pr-8 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none h-[42px]">
-                <option value="">Semua Kelompok</option>
-                <option value="Rendah">Ekonomi Rendah</option>
-                <option value="Menengah">Ekonomi Menengah</option>
-                <option value="Mampu">Ekonomi Mampu</option>
+                <option value="">Semua Prioritas</option>
+                <option value="Tinggi">Tinggi</option>
+                <option value="Sedang">Sedang</option>
+                <option value="Rendah">Rendah</option>
             </select>
             <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 pointer-events-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></span>
         </div>
@@ -124,7 +124,7 @@
                     <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Tanggungan</th>
                     <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kondisi Rumah</th>
                     <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Bansos</th>
-                    <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Kelompok</th>
+                    <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Prioritas Bantuan</th>
                     @if(auth()->user()->isAdmin())
                     <th class="px-3 py-3 text-center font-semibold text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">Aksi</th>
                     @endif
@@ -159,12 +159,12 @@
                     <td class="px-3 py-3 text-gray-600 dark:text-gray-400">{{ $w->bansos->nama ?? '-' }}</td>
                     <td class="px-3 py-3 text-center">
                         @if($w->latestClusteringResult)
-                        <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ match($w->latestClusteringResult->label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($w->latestClusteringResult->label) { 'Rendah' => 'Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $w->latestClusteringResult->label } }}</span>
+                        <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ match($w->latestClusteringResult->label) { 'Tinggi' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Rendah' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ $w->latestClusteringResult->label }}</span>
                         <span class="hidden">Sudah Divalidasi</span>
                         @elseif($w->latestClassification)
                         @php $cls = $w->latestClassification; @endphp
                         <div class="flex flex-col items-center gap-0.5">
-                            <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ match($cls->assigned_label) { 'Rendah' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Tinggi' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ match($cls->assigned_label) { 'Rendah' => 'Rendah', 'Sedang' => 'Menengah', 'Tinggi' => 'Mampu', default => $cls->assigned_label } }}</span>
+                            <span class="inline-flex px-2 py-0.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ match($cls->assigned_label) { 'Tinggi' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400', 'Sedang' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400', 'Rendah' => 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400', default => 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' } }}">{{ $cls->assigned_label }}</span>
                             @if($cls->status === 'pending')
                             <span class="text-[10px] text-amber-600 dark:text-amber-400 font-medium whitespace-nowrap">Menunggu Validasi</span>
                             @elseif($cls->status === 'approved')
