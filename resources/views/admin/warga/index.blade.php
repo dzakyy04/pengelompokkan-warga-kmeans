@@ -361,6 +361,7 @@
     });
 
     $(document).ready(function() {
+        if ($('#wargaTable tbody tr').length > 0 && !$('#wargaTable tbody tr td[colspan]').length) {
         var table = $('#wargaTable').DataTable({
             language: {
                 search: "Cari: ",
@@ -403,6 +404,7 @@
             $(this).addClass('hidden');
             table.draw();
         });
+        } // end if table has data
     });
 
     function openModal(id) {
