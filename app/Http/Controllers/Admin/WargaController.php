@@ -311,72 +311,101 @@ class WargaController extends Controller
     {
         abort_unless(auth()->user()->isAdmin(), 403, 'Akses ditolak.');
 
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+
+        // ===== Sheet 1: Data Warga =====
+        $sheet1 = $spreadsheet->getActiveSheet();
+        $sheet1->setTitle('Data Warga');
+
         $headers = ['nama_lengkap', 'nik', 'rt_rw', 'pekerjaan', 'status_produktivitas', 'jumlah_tanggungan', 'pendidikan', 'kondisi_rumah', 'bansos'];
 
-        // Buat contoh data
+        // Header styling
+        foreach ($headers as $colIndex => $header) {
+            $cell = $sheet1->getCellByColumnAndRow($colIndex + 1, 1);
+            $cell->setValue($header);
+        }
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '059669']],
+        ];
+        $sheet1->getStyle('A1:I1')->applyFromArray($headerStyle);
+
+        // Contoh data
         $examples = [
             ['Budi Santoso', '1234567890123456', 'RT 01 / RW 02', 'Pedagang', '', 3, 'SMA', 'Milik Sendiri', 'Tidak Menerima'],
             ['Siti Aminah', '6543210987654321', 'RT 03 / RW 01', 'IRT', '', 5, 'SD', 'Sewa', 'PKH atau BLT'],
             ['Ahmad Sopir', '1111222233334444', 'RT 02 / RW 01', 'Sopir', 'Tidak Stabil', 2, 'SMP', 'Milik Sendiri', 'Sembako'],
         ];
 
-        // Ambil referensi data master
+        foreach ($examples as $rowIndex => $row) {
+            foreach ($row as $colIndex => $value) {
+                $cell = $sheet1->getCellByColumnAndRow($colIndex + 1, $rowIndex + 2);
+                // Kolom NIK (index 1) harus selalu string agar tidak overflow
+                if ($colIndex === 1) {
+                    $cell->setValueExplicit((string) $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                } else {
+                    $cell->setValue($value);
+                }
+            }
+        }
+
+        // Set kolom NIK sebagai text format untuk seluruh kolom
+        $sheet1->getStyle('B:B')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
+
+        // ===== Sheet 2: Referensi =====
+        $sheet2 = $spreadsheet->createSheet();
+        $sheet2->setTitle('Referensi');
+
+        $refHeaders = ['Pendidikan (kolom: pendidikan)', 'Kondisi Rumah (kolom: kondisi_rumah)', 'Bansos (kolom: bansos)', 'Pekerjaan (kolom: pekerjaan)'];
+        foreach ($refHeaders as $colIndex => $header) {
+            $sheet2->getCellByColumnAndRow($colIndex + 1, 1)->setValue($header);
+        }
+        $refHeaderStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '2563EB']],
+        ];
+        $lastCol = chr(64 + count($refHeaders)); // D
+        $sheet2->getStyle("A1:{$lastCol}1")->applyFromArray($refHeaderStyle);
+
+        // Data referensi
         $pendidikans = MasterPendidikan::orderBy('skor')->pluck('nama')->toArray();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->pluck('nama')->toArray();
         $bansos = MasterBansos::orderBy('skor', 'desc')->pluck('nama')->toArray();
         $pekerjaans = MasterPekerjaan::orderBy('skor')->pluck('nama')->toArray();
 
-        $filename = 'template-import-warga.xlsx';
-        $tempPath = 'temp/' . $filename;
+        $maxRows = max(count($pendidikans), count($kondisiRumahs), count($bansos), count($pekerjaans));
+        for ($i = 0; $i < $maxRows; $i++) {
+            $row = $i + 2;
+            $sheet2->getCellByColumnAndRow(1, $row)->setValue($pendidikans[$i] ?? '');
+            $sheet2->getCellByColumnAndRow(2, $row)->setValue($kondisiRumahs[$i] ?? '');
+            $sheet2->getCellByColumnAndRow(3, $row)->setValue($bansos[$i] ?? '');
+            $sheet2->getCellByColumnAndRow(4, $row)->setValue($pekerjaans[$i] ?? '');
+        }
 
-        // Gunakan store() bukan download() untuk menghindari bug ZipStream CRC di PHP 8.2
-        Excel::store(new class($headers, $examples, $pendidikans, $kondisiRumahs, $bansos, $pekerjaans) implements \Maatwebsite\Excel\Concerns\WithMultipleSheets {
-            private $headers, $examples, $pendidikans, $kondisiRumahs, $bansos, $pekerjaans;
+        // Auto-size kolom
+        foreach (range('A', 'I') as $col) {
+            $sheet1->getColumnDimension($col)->setAutoSize(true);
+        }
+        foreach (range('A', $lastCol) as $col) {
+            $sheet2->getColumnDimension($col)->setAutoSize(true);
+        }
 
-            public function __construct($headers, $examples, $pendidikans, $kondisiRumahs, $bansos, $pekerjaans)
-            {
-                $this->headers = $headers;
-                $this->examples = $examples;
-                $this->pendidikans = $pendidikans;
-                $this->kondisiRumahs = $kondisiRumahs;
-                $this->bansos = $bansos;
-                $this->pekerjaans = $pekerjaans;
-            }
+        // Set sheet aktif ke sheet pertama
+        $spreadsheet->setActiveSheetIndex(0);
 
-            public function sheets(): array
-            {
-                return [
-                    'Data Warga' => new class($this->headers, $this->examples) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithTitle, \Maatwebsite\Excel\Concerns\WithStyles {
-                        private $headers, $examples;
-                        public function __construct($headers, $examples) { $this->headers = $headers; $this->examples = $examples; }
-                        public function headings(): array { return $this->headers; }
-                        public function array(): array { return $this->examples; }
-                        public function title(): string { return 'Data Warga'; }
-                        public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet): array {
-                            return [1 => ['font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']], 'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '059669']]]];
-                        }
-                    },
-                    'Referensi' => new class($this->pendidikans, $this->kondisiRumahs, $this->bansos, $this->pekerjaans) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithTitle, \Maatwebsite\Excel\Concerns\WithStyles {
-                        private $pendidikans, $kondisiRumahs, $bansos, $pekerjaans;
-                        public function __construct($p, $k, $b, $pek) { $this->pendidikans = $p; $this->kondisiRumahs = $k; $this->bansos = $b; $this->pekerjaans = $pek; }
-                        public function headings(): array { return ['Pendidikan (kolom: pendidikan)', 'Kondisi Rumah (kolom: kondisi_rumah)', 'Bansos (kolom: bansos)', 'Pekerjaan (kolom: pekerjaan)']; }
-                        public function array(): array {
-                            $maxRows = max(count($this->pendidikans), count($this->kondisiRumahs), count($this->bansos), count($this->pekerjaans));
-                            $data = [];
-                            for ($i = 0; $i < $maxRows; $i++) {
-                                $data[] = [$this->pendidikans[$i] ?? '', $this->kondisiRumahs[$i] ?? '', $this->bansos[$i] ?? '', $this->pekerjaans[$i] ?? ''];
-                            }
-                            return $data;
-                        }
-                        public function title(): string { return 'Referensi'; }
-                        public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet): array {
-                            return [1 => ['font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']], 'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '2563EB']]]];
-                        }
-                    },
-                ];
-            }
-        }, $tempPath, 'local');
+        // Simpan ke file temp lalu download
+        $tempFile = storage_path('app/temp/template-import-warga.xlsx');
+        if (!is_dir(dirname($tempFile))) {
+            mkdir(dirname($tempFile), 0755, true);
+        }
 
-        return response()->download(storage_path('app/' . $tempPath), $filename)->deleteFileAfterSend(true);
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->setPreCalculateFormulas(false);
+        $writer->save($tempFile);
+
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+
+        return response()->download($tempFile, 'template-import-warga.xlsx')->deleteFileAfterSend(true);
     }
 }
