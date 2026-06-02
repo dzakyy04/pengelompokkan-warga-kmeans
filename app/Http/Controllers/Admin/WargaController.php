@@ -231,9 +231,9 @@ class WargaController extends Controller
             }
             
             $order = match($kelompok) {
-                'Rendah' => 1,
+                'Tinggi' => 1,
                 'Sedang' => 2,
-                'Tinggi' => 3,
+                'Rendah' => 3,
                 default => 4,
             };
             
@@ -248,7 +248,7 @@ class WargaController extends Controller
         $kelompok = $request->kelompok;
 
         $pdf = Pdf::loadView('pdf.laporan-warga', compact('wargas', 'search', 'kelompok'))
-            ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
             ->setOption('margin-top', 20)
             ->setOption('margin-bottom', 20)
             ->setOption('margin-left', 20)
@@ -264,10 +264,13 @@ class WargaController extends Controller
     {
         $wargas = $this->getFilteredWarga($request);
 
-        return Excel::download(
-            new WargaExport($wargas),
-            'data-warga-' . now()->format('Y-m-d') . '.xlsx'
-        );
+        $filename = 'data-warga-' . now()->format('Y-m-d') . '.xlsx';
+        $tempPath = 'temp/' . $filename;
+
+        // Gunakan store() bukan download() untuk menghindari bug ZipStream CRC di PHP 8.2
+        Excel::store(new WargaExport($wargas), $tempPath, 'local');
+
+        return response()->download(storage_path('app/' . $tempPath), $filename)->deleteFileAfterSend(true);
     }
 
     public function importExcel(Request $request)
@@ -323,7 +326,11 @@ class WargaController extends Controller
         $bansos = MasterBansos::orderBy('skor', 'desc')->pluck('nama')->toArray();
         $pekerjaans = MasterPekerjaan::orderBy('skor')->pluck('nama')->toArray();
 
-        return Excel::download(new class($headers, $examples, $pendidikans, $kondisiRumahs, $bansos, $pekerjaans) implements \Maatwebsite\Excel\Concerns\WithMultipleSheets {
+        $filename = 'template-import-warga.xlsx';
+        $tempPath = 'temp/' . $filename;
+
+        // Gunakan store() bukan download() untuk menghindari bug ZipStream CRC di PHP 8.2
+        Excel::store(new class($headers, $examples, $pendidikans, $kondisiRumahs, $bansos, $pekerjaans) implements \Maatwebsite\Excel\Concerns\WithMultipleSheets {
             private $headers, $examples, $pendidikans, $kondisiRumahs, $bansos, $pekerjaans;
 
             public function __construct($headers, $examples, $pendidikans, $kondisiRumahs, $bansos, $pekerjaans)
@@ -368,6 +375,8 @@ class WargaController extends Controller
                     },
                 ];
             }
-        }, 'template-import-warga.xlsx');
+        }, $tempPath, 'local');
+
+        return response()->download(storage_path('app/' . $tempPath), $filename)->deleteFileAfterSend(true);
     }
 }

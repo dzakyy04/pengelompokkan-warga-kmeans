@@ -18,20 +18,51 @@
 
         /* Kop Surat */
         .kop-surat {
-            text-align: center;
-            padding-bottom: 10px;
-            border-bottom: 4px solid #1a1a1a;
-            margin-bottom: 6px;
+            display: table;
+            width: 100%;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #1a1a1a;
+            margin-bottom: 4px;
         }
-        .kop-surat .nama-instansi {
-            font-size: 14px;
+        .kop-logo {
+            display: table-cell;
+            width: 75px;
+            vertical-align: middle;
+        }
+        .kop-logo img {
+            width: 65px;
+            height: auto;
+        }
+        .kop-text {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            padding-left: 10px;
+        }
+        .kop-text .pemerintah {
+            font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
+            color: #1a1a1a;
         }
-        .kop-surat .alamat {
+        .kop-text .kecamatan {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1a1a1a;
+        }
+        .kop-text .desa {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #1a1a1a;
+        }
+        .kop-text .alamat {
             font-size: 9px;
-            color: #555;
+            color: #444;
             margin-top: 2px;
         }
         .kop-border-double {
@@ -85,18 +116,18 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 16px;
-            font-size: 9px;
+            font-size: 7.5px;
         }
         table.data th,
         table.data td {
             border: 1px solid #333;
-            padding: 5px 6px;
+            padding: 3px 4px;
         }
         table.data th {
             background: #2d2d2d;
             color: #ffffff;
             font-weight: bold;
-            font-size: 8px;
+            font-size: 7px;
             text-transform: uppercase;
             text-align: center;
             letter-spacing: 0.3px;
@@ -121,9 +152,9 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
-        .badge-rendah { background: #fecaca; color: #991b1b; }
-        .badge-sedang { background: #fde68a; color: #92400e; }
-        .badge-tinggi { background: #bbf7d0; color: #166534; }
+        .badge-tinggi { background: #ffe4e6; color: #be123c; }
+        .badge-sedang { background: #fef3c7; color: #92400e; }
+        .badge-rendah { background: #ccfbf1; color: #115e59; }
 
         /* Keterangan */
         .keterangan {
@@ -183,8 +214,15 @@
 <body>
     {{-- Kop Surat --}}
     <div class="kop-surat">
-        <div class="nama-instansi">Pemerintah Desa Sungai Rebo</div>
-        <div class="alamat">Jl. Sel., Sungai Pinang, Kec. Rambutan, Kab. Banyuasin, Sumatera Selatan</div>
+        <div class="kop-logo">
+            <img src="{{ public_path('images/logo-banyasin.png') }}" alt="Logo">
+        </div>
+        <div class="kop-text">
+            <div class="pemerintah">Pemerintah Kabupaten Banyuasin</div>
+            <div class="kecamatan">Kecamatan Banyuasin I</div>
+            <div class="desa">Desa Sungai Rebo</div>
+            <div class="alamat">JL. Mayor Abdullah Sani No ; 48 RT 13 RK II Sungai Rebo</div>
+        </div>
     </div>
     <div class="kop-border-double"></div>
 
