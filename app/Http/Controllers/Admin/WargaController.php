@@ -311,101 +311,42 @@ class WargaController extends Controller
     {
         abort_unless(auth()->user()->isAdmin(), 403, 'Akses ditolak.');
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-
-        // ===== Sheet 1: Data Warga =====
-        $sheet1 = $spreadsheet->getActiveSheet();
-        $sheet1->setTitle('Data Warga');
-
-        $headers = ['nama_lengkap', 'nik', 'rt_rw', 'pekerjaan', 'status_produktivitas', 'jumlah_tanggungan', 'pendidikan', 'kondisi_rumah', 'bansos'];
-
-        // Header styling
-        foreach ($headers as $colIndex => $header) {
-            $cell = $sheet1->getCellByColumnAndRow($colIndex + 1, 1);
-            $cell->setValue($header);
-        }
-        $headerStyle = [
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '059669']],
-        ];
-        $sheet1->getStyle('A1:I1')->applyFromArray($headerStyle);
-
-        // Contoh data
-        $examples = [
-            ['Budi Santoso', '1234567890123456', 'RT 01 / RW 02', 'Pedagang', '', 3, 'SMA', 'Milik Sendiri', 'Tidak Menerima'],
-            ['Siti Aminah', '6543210987654321', 'RT 03 / RW 01', 'IRT', '', 5, 'SD', 'Sewa', 'PKH atau BLT'],
-            ['Ahmad Sopir', '1111222233334444', 'RT 02 / RW 01', 'Sopir', 'Tidak Stabil', 2, 'SMP', 'Milik Sendiri', 'Sembako'],
-        ];
-
-        foreach ($examples as $rowIndex => $row) {
-            foreach ($row as $colIndex => $value) {
-                $cell = $sheet1->getCellByColumnAndRow($colIndex + 1, $rowIndex + 2);
-                // Kolom NIK (index 1) harus selalu string agar tidak overflow
-                if ($colIndex === 1) {
-                    $cell->setValueExplicit((string) $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                } else {
-                    $cell->setValue($value);
-                }
-            }
-        }
-
-        // Set kolom NIK sebagai text format untuk seluruh kolom
-        $sheet1->getStyle('B:B')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
-
-        // ===== Sheet 2: Referensi =====
-        $sheet2 = $spreadsheet->createSheet();
-        $sheet2->setTitle('Referensi');
-
-        $refHeaders = ['Pendidikan (kolom: pendidikan)', 'Kondisi Rumah (kolom: kondisi_rumah)', 'Bansos (kolom: bansos)', 'Pekerjaan (kolom: pekerjaan)'];
-        foreach ($refHeaders as $colIndex => $header) {
-            $sheet2->getCellByColumnAndRow($colIndex + 1, 1)->setValue($header);
-        }
-        $refHeaderStyle = [
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '2563EB']],
-        ];
-        $lastCol = chr(64 + count($refHeaders)); // D
-        $sheet2->getStyle("A1:{$lastCol}1")->applyFromArray($refHeaderStyle);
-
-        // Data referensi
+        // Ambil referensi data master
         $pendidikans = MasterPendidikan::orderBy('skor')->pluck('nama')->toArray();
         $kondisiRumahs = MasterKondisiRumah::orderBy('nama')->pluck('nama')->toArray();
         $bansos = MasterBansos::orderBy('skor', 'desc')->pluck('nama')->toArray();
         $pekerjaans = MasterPekerjaan::orderBy('skor')->pluck('nama')->toArray();
 
+        // Buat referensi data
         $maxRows = max(count($pendidikans), count($kondisiRumahs), count($bansos), count($pekerjaans));
+        $refRows = [];
         for ($i = 0; $i < $maxRows; $i++) {
-            $row = $i + 2;
-            $sheet2->getCellByColumnAndRow(1, $row)->setValue($pendidikans[$i] ?? '');
-            $sheet2->getCellByColumnAndRow(2, $row)->setValue($kondisiRumahs[$i] ?? '');
-            $sheet2->getCellByColumnAndRow(3, $row)->setValue($bansos[$i] ?? '');
-            $sheet2->getCellByColumnAndRow(4, $row)->setValue($pekerjaans[$i] ?? '');
+            $refRows[] = [$pendidikans[$i] ?? '', $kondisiRumahs[$i] ?? '', $bansos[$i] ?? '', $pekerjaans[$i] ?? ''];
         }
 
-        // Auto-size kolom
-        foreach (range('A', 'I') as $col) {
-            $sheet1->getColumnDimension($col)->setAutoSize(true);
-        }
-        foreach (range('A', $lastCol) as $col) {
-            $sheet2->getColumnDimension($col)->setAutoSize(true);
-        }
+        // Gunakan SimpleXlsx (ZipArchive native) untuk menghindari bug ZipStream/PhpSpreadsheet di PHP 8.2
+        $xlsx = new \App\Helpers\SimpleXlsx();
 
-        // Set sheet aktif ke sheet pertama
-        $spreadsheet->setActiveSheetIndex(0);
+        $xlsx->addSheet('Data Warga',
+            ['nama_lengkap', 'nik', 'rt_rw', 'pekerjaan', 'status_produktivitas', 'jumlah_tanggungan', 'pendidikan', 'kondisi_rumah', 'bansos'],
+            [
+                ['Budi Santoso', '1234567890123456', 'RT 01 / RW 02', 'Pedagang', '', 3, 'SMA', 'Milik Sendiri', 'Tidak Menerima'],
+                ['Siti Aminah', '6543210987654321', 'RT 03 / RW 01', 'IRT', '', 5, 'SD', 'Sewa', 'PKH atau BLT'],
+                ['Ahmad Sopir', '1111222233334444', 'RT 02 / RW 01', 'Sopir', 'Tidak Stabil', 2, 'SMP', 'Milik Sendiri', 'Sembako'],
+            ],
+            '059669'
+        );
 
-        // Simpan ke file temp lalu download
+        $xlsx->addSheet('Referensi',
+            ['Pendidikan (kolom: pendidikan)', 'Kondisi Rumah (kolom: kondisi_rumah)', 'Bansos (kolom: bansos)', 'Pekerjaan (kolom: pekerjaan)'],
+            $refRows,
+            '2563EB'
+        );
+
         $tempFile = storage_path('app/temp/template-import-warga.xlsx');
-        if (!is_dir(dirname($tempFile))) {
-            mkdir(dirname($tempFile), 0755, true);
-        }
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $writer->setPreCalculateFormulas(false);
-        $writer->save($tempFile);
-
-        $spreadsheet->disconnectWorksheets();
-        unset($spreadsheet);
+        $xlsx->save($tempFile);
 
         return response()->download($tempFile, 'template-import-warga.xlsx')->deleteFileAfterSend(true);
     }
 }
+
