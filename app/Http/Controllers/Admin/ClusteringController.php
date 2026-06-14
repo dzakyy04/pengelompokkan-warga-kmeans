@@ -80,7 +80,16 @@ class ClusteringController extends Controller
     public function downloadExcel($id)
     {
         $session = ClusteringSession::with(['results.warga.pendidikan', 'results.warga.kondisiRumah', 'results.warga.bansos'])->findOrFail($id);
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ClusteringExport($session), "laporan-pengelompokan-{$session->id}.xlsx");
+        $fileName = "laporan-pengelompokan-{$session->id}.xlsx";
+
+        // Store to temp file first to avoid ZipStream float-to-int TypeError on PHP 8.2
+        \Maatwebsite\Excel\Facades\Excel::store(new \App\Exports\ClusteringExport($session), $fileName, 'local');
+
+        $filePath = storage_path("app/{$fileName}");
+
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
     }
 
     public function pendingClassifications()
